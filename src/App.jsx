@@ -11,11 +11,11 @@ function App() {
 
   const Layout = () => {
     return(
-      <div>
+      <div className="app_layout">
         <Sidebar />
-        <Header />
-        <div>
-          <Routes className="app-content">
+        <div className='app_content'>
+          <Header />
+          <Routes>
             <Route path="usuarios" element={<Usuarios />} />
           </Routes>
         </div>
@@ -26,7 +26,7 @@ function App() {
   return (
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/admin/*" element={<Layout />} />
         </Routes>
       </Router>

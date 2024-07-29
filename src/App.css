@@ -1,3 +1,16 @@
-.app-content{
-    background-color: red;
+.app_layout {
+    display: flex;
 }
+
+.app_content {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0px;
+    left: 90px;
+    height: 100%;
+    width: 93.75%;
+    padding: 35px 65px;
+    align-items: center;
+}
+  

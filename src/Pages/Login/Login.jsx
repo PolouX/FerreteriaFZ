@@ -1,42 +1,35 @@
-import React, { useState } from 'react';
-import './Login.css';
+import React, { useState } from 'react'
+import './Login.css'
 import { LiaUserShieldSolid } from "react-icons/lia";
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../firebaseConfig';
+import { db } from '../../firebaseConfig'; // Importar la configuración de Firebase
 import { doc, getDoc } from 'firebase/firestore';
 
 const Login = () => {
+  const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Iniciar sesión clicado");
+    console.log('Iniciar sesión clicado');
+    const docId = '79VRcY3RIKs0Pr6V4s5x'; // ID del documento del usuario en Firestore
+    console.log('Buscando documento con ID:', docId);
+    const docRef = doc(db, "usuarios", docId);
+    const docSnap = await getDoc(docRef);
 
-    try {
-      const docRef = doc(db, "usuarios", "79VRcY3RIKs0Pr6V4s5x"); // Asegúrate de que este ID sea correcto
-      console.log("Buscando documento con ID:", docRef.id);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        console.log("Documento encontrado");
-        const userData = docSnap.data();
-        console.log("Datos del usuario:", userData);
-        if (userData.contraseña === password) {
-          console.log("Contraseña correcta");
-          navigate('/admin/usuarios');
-        } else {
-          console.log("Contraseña incorrecta");
-          setError('Contraseña incorrecta');
-        }
+    if (docSnap.exists()) {
+      console.log('Documento encontrado');
+      const userData = docSnap.data();
+      console.log('Datos del usuario:', userData);
+      if (userData.contreseña === password) {
+        navigate('/admin/usuarios');
       } else {
-        console.log("No se encontró el documento");
-        setError('Usuario no encontrado');
+        setError('Contraseña incorrecta');
       }
-    } catch (error) {
-      console.error("Error obteniendo el documento:", error);
-      setError('Error obteniendo el documento');
+    } else {
+      console.log('No se encontró el documento');
+      setError('Usuario no encontrado');
     }
   };
 
@@ -55,19 +48,18 @@ const Login = () => {
               <p>Contraseña</p>
               <div className="input-container">
                 <LiaUserShieldSolid className='icon'/>
-                <input 
-                  type="password" 
-                  placeholder='Ingrese su contraseña...' 
-                  value={password} 
-                  onChange={(e) => setPassword(e.target.value)} 
+                <input
+                  type="password"
+                  placeholder='Ingrese su contraseña...'
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
             </div>
-
+            
             {error && <p style={{ color: 'red' }}>{error}</p>}
-
-            <button type='submit'>Iniciar sesión</button>
+            <button className="login_boton" type='submit'>Iniciar sesión</button>
           </form>
         </div>
       </div>
