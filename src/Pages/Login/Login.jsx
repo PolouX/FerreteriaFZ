@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import './Login.css'
+import React, { useState } from 'react';
+import './Login.css';
 import { LiaUserShieldSolid } from "react-icons/lia";
 import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebaseConfig'; // Importar la configuración de Firebase
@@ -22,9 +22,11 @@ const Login = () => {
       console.log('Documento encontrado');
       const userData = docSnap.data();
       console.log('Datos del usuario:', userData);
-      if (userData.contreseña === password) {
+      if (userData.contraseña === password) {
+        console.log('Contraseña correcta, redirigiendo...');
         navigate('/admin/usuarios');
       } else {
+        console.log('Contraseña incorrecta');
         setError('Contraseña incorrecta');
       }
     } else {
@@ -71,7 +73,7 @@ const Login = () => {
         <img src="./src/Assets/Dashboard.png" alt=""/>
       </div>    
     </>
-  )
+  );
 }
 
 export default Login;
