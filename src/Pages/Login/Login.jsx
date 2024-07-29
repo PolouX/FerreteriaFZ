@@ -1,20 +1,43 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './Login.css'
 import { LiaUserShieldSolid } from "react-icons/lia";
 import { useNavigate } from 'react-router-dom';
+import { db } from '../../firebaseConfig'; // Importar la configuración de Firebase
+import { doc, getDoc } from 'firebase/firestore';
 
 const Login = () => {
-
   const navigate = useNavigate();
-  const handleLogin = () => {
-    navigate('/admin/usuarios');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    console.log('Iniciar sesión clicado');
+    const docId = '79VRcY3RIKs0Pr6V4s5x'; // ID del documento del usuario en Firestore
+    console.log('Buscando documento con ID:', docId);
+    const docRef = doc(db, "usuarios", docId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      console.log('Documento encontrado');
+      const userData = docSnap.data();
+      console.log('Datos del usuario:', userData);
+      if (userData.contreseña === password) {
+        navigate('/admin/usuarios');
+      } else {
+        setError('Contraseña incorrecta');
+      }
+    } else {
+      console.log('No se encontró el documento');
+      setError('Usuario no encontrado');
+    }
   };
 
   return (
     <>
       <div className="content">
         <div className="wrapper">
-          <form action="">
+          <form onSubmit={handleLogin}>
             <div className="heading">
               <img src="./src/Assets/Logo.png" alt="Logo de ferreterias zapopan" width='50px'/>
               <h1>¡Inicia sesión!</h1>
@@ -25,11 +48,18 @@ const Login = () => {
               <p>Contraseña</p>
               <div className="input-container">
                 <LiaUserShieldSolid className='icon'/>
-                <input type="password" placeholder='Ingrese su contraseña...'   required/>
+                <input
+                  type="password"
+                  placeholder='Ingrese su contraseña...'
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
               </div>
             </div>
-
-            <button className="login_boton" type='submit' onClick={handleLogin}>Iniciar sesión</button>
+            
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            <button className="login_boton" type='submit'>Iniciar sesión</button>
           </form>
         </div>
       </div>
@@ -44,4 +74,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default Login;
