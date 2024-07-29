@@ -1,13 +1,14 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './Pages/Login/Login';
 import Usuarios from './Pages/Admin/Usuarios/Usuarios';
 import Sidebar from './Components/Sidebar/Sidebar';
 import Header from './Components/Header/Header';
 
 function App() {
+
   const Layout = () => {
-    return (
+    return(
       <div>
         <Sidebar />
         <Header />
@@ -17,7 +18,7 @@ function App() {
           </Routes>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -27,7 +28,7 @@ function App() {
         <Route path="/admin/*" element={<Layout />} />
       </Routes>
     </Router>
-  );
+  )
 }
 
 export default App;
