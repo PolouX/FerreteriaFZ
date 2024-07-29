@@ -29,7 +29,7 @@ const Login = () => {
               </div>
             </div>
 
-            <button type='submit' onClick={handleLogin}>Iniciar sesión</button>
+            <button className="login_boton" type='submit' onClick={handleLogin}>Iniciar sesión</button>
           </form>
         </div>
       </div>

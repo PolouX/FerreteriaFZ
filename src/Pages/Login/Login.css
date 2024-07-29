@@ -99,7 +99,7 @@ body {
   }
     
   
-  button {
+  .login_boton {
       width: 100%;
       height: 55px;
       border-radius: 12px;
@@ -118,7 +118,7 @@ body {
       transition: background 0.3s ease, filter 0.3s ease;
   }
   
-  button:hover {
+  .login_boton:hover {
       background: linear-gradient(to right, #FF6F6F, #D92332);
       filter: brightness(1.2);
       box-shadow: rgba(217, 35, 50, 0.3) 0 -25px 18px -14px inset,
