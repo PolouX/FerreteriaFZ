@@ -15,7 +15,7 @@ function App() {
         <Sidebar />
         <Header />
         <div>
-          <Routes>
+          <Routes className="app-content">
             <Route path="usuarios" element={<Usuarios />} />
           </Routes>
         </div>
