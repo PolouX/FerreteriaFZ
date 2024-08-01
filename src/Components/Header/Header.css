@@ -5,8 +5,9 @@
     justify-content: space-between;
 }
 
-.header_logout {
-    color: black;
+.header_title p{
+    position: relative;
+    top: -5px;
 }
 
 .header_logout {
@@ -14,7 +15,12 @@
     align-items: center;
 }
 
+.header_logout p{
+    font-size: 18px;
+}
+
 .logout_boton {
+    position: relative;
     display: flex;
     margin-left: 5px;
     background: linear-gradient(to right, #FF6F6F, #D92332);
@@ -22,13 +28,40 @@
       background-clip: text;
       color: transparent;
     border: none;
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 500;
     cursor: pointer;
     align-items: center ;
+    overflow: hidden;
+}
+
+
+.logout_boton::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(to right, #FF6F6F, #D92332); /* Color del subrayado */
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.3s ease;
+}
+
+.logout_boton:hover::before {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+.logout_boton:hover .logout_icon {
+    transform: rotate(0deg);
 }
 
 .logout_icon {
     color: #D92332;
+    font-size: 20px;
     margin-left: 3px;
+    transition: transform 0.6s ease, margin-left 0.3s ease;
+    transform: rotate(180deg);
 }

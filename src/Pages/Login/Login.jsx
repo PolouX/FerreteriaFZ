@@ -2,36 +2,42 @@ import React, { useState } from 'react';
 import './Login.css';
 import { LiaUserShieldSolid } from "react-icons/lia";
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../firebaseConfig'; // Importar la configuración de Firebase
-import { doc, getDoc } from 'firebase/firestore';
+
+import { db } from '../../firebaseConfig';
+import { doc, getDocs, collection, query, where } from 'firebase/firestore';
+
 
 const Login = () => {
   const navigate = useNavigate();
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [inputValue, setInputValue] = useState('');
+  const [error, setError] = useState("");
+
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log('Iniciar sesión clicado');
-    const docId = '79VRcY3RIKs0Pr6V4s5x'; // ID del documento del usuario en Firestore
-    console.log('Buscando documento con ID:', docId);
-    const docRef = doc(db, "usuarios", docId);
-    const docSnap = await getDoc(docRef);
+    console.log(inputValue);
 
-    if (docSnap.exists()) {
-      console.log('Documento encontrado');
-      const userData = docSnap.data();
-      console.log('Datos del usuario:', userData);
-      if (userData.contraseña === password) {
-        console.log('Contraseña correcta, redirigiendo...');
-        navigate('/admin/usuarios');
+    const usuarios = collection(db, "usuarios");
+    const q = query(usuarios, where('contrasena', '==', inputValue));
+
+    try {
+      // Ejecuta la consulta y espera los resultados
+      const querySnapshot = await getDocs(q);
+
+      
+      if (querySnapshot.empty) {
+        setError("Contraseña incorrecta")
+        console.log(error);
       } else {
-        console.log('Contraseña incorrecta');
-        setError('Contraseña incorrecta');
+        
+        const doc = querySnapshot.docs[0];
+        navigate("/admin/usuarios")
       }
-    } else {
-      console.log('No se encontró el documento');
-      setError('Usuario no encontrado');
+    } catch (err) {
+      console.log('Error buscando el usuario:', err.message);
     }
   };
 
@@ -41,7 +47,7 @@ const Login = () => {
         <div className="wrapper">
           <form onSubmit={handleLogin}>
             <div className="heading">
-              <img src="./src/Assets/Logo.png" alt="Logo de ferreterias zapopan" width='50px'/>
+              <img src="./src/Assets/Logo.png" alt="Logo de ferreterias zapopan" width='50px' />
               <h1>¡Inicia sesión!</h1>
               <p>Ingresa tus datos para continuar.</p>
             </div>
@@ -49,18 +55,16 @@ const Login = () => {
             <div className="contra">
               <p>Contraseña</p>
               <div className="input-container">
-                <LiaUserShieldSolid className='icon'/>
+                <LiaUserShieldSolid className='icon' />
                 <input
                   type="password"
+                  onChange={handleInputChange}
                   placeholder='Ingrese su contraseña...'
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
             </div>
-            
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+
             <button className="login_boton" type='submit'>Iniciar sesión</button>
           </form>
         </div>
@@ -70,8 +74,8 @@ const Login = () => {
           <h1>¡Bienvenido de vuelta!</h1>
           <p>Gestiona tus pedidos con facilidad: crea, revisa, surte y factura de manera eficiente.</p>
         </div>
-        <img src="./src/Assets/Dashboard.png" alt=""/>
-      </div>    
+        <img src="./src/Assets/Dashboard.png" alt="" />
+      </div>
     </>
   );
 }

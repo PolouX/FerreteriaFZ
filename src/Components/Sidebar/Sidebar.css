@@ -2,7 +2,7 @@
     top: 0px;
     height: 100vh;
     width: 90px;
-    border-right: 2px solid rgba(0, 0, 0, 0.3);
+    border-right: 1px solid rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -49,13 +49,4 @@
 .sidebar_notificaciones {
     position: absolute;
     bottom: 20px;
-}
-
-.sidebar_selector {
-    width: 47px;
-    height: 47px;
-    top: 387px;
-    left: 20px;
-    border-radius: 18px;
-    position: absolute;
 }

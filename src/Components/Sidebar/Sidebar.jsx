@@ -15,7 +15,6 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar">
-      <div className="sidebar_selector"></div>
       <div className="sidebar_elementos">
         <Link 
           to="/admin/pedidos"

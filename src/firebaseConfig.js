@@ -1,16 +1,15 @@
 // src/firebaseConfig.js
-
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDiss6f1HHOnBL_15iGJuu7ubVY069L8nU",
-  authDomain: "ferreteria-zapopan.firebaseapp.com",
-  projectId: "ferreteria-zapopan",
-  storageBucket: "ferreteria-zapopan.appspot.com",
-  messagingSenderId: "225390414239",
-  appId: "1:225390414239:web:15dc78a2ca4b051fd355aa",
-  measurementId: "G-00H7XYV962"
+  apiKey: "AIzaSyBmwHmRVktqT6uXr7HpEk36FtiZDEmwXJc",
+  authDomain: "login-test-b43ea.firebaseapp.com",
+  projectId: "login-test-b43ea",
+  storageBucket: "login-test-b43ea.appspot.com",
+  messagingSenderId: "271231135095",
+  appId: "1:271231135095:web:d36fb213598e42a3384572",
+  measurementId: "G-XRJBTP9J6V"
 };
 
 // Initialize Firebase
