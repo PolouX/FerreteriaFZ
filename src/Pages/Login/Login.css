@@ -97,6 +97,11 @@ body {
       border: 1px solid rgba(0, 0, 0, 0.8);
       box-sizing: border-box;
   }
+
+  .input-container input:focus {
+    border: 2px solid rgba(0, 0, 0, 0.6);
+    outline: none;
+  }
     
   
   .login_boton {
@@ -130,3 +135,20 @@ body {
                   rgba(255, 255, 255, 0.1) 0 0 10px 2px;
   }
   
+  .login_error {
+    position: relative;
+    display: flex;
+    align-items: center;
+    color: #ff4d4d;
+    height: 20px;
+    top: -35px;
+    font-size: 14px; 
+  }
+
+  .login-input-error input {
+    border: 1px solid #ff4d4d;
+}
+
+.login-input-error input:focus {
+    border: 1px solid #ff4d4d;
+}

@@ -9,10 +9,10 @@ import { doc, getDocs, collection, query, where } from 'firebase/firestore';
 
 const Login = () => {
   const navigate = useNavigate();
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState("");
 
-  const handleInputChange = (e) => {
+  const handleInputChange = async (e) => {
     setInputValue(e.target.value);
   };
 
@@ -24,20 +24,20 @@ const Login = () => {
     const q = query(usuarios, where('contrasena', '==', inputValue));
 
     try {
-      // Ejecuta la consulta y espera los resultados
       const querySnapshot = await getDocs(q);
 
-      
       if (querySnapshot.empty) {
-        setError("Contraseña incorrecta")
-        console.log(error);
+        console.log('Contrasenia incorrecta');
+        setInputValue("");
+        setError("¡Contraseña incorrecta!")
       } else {
-        
         const doc = querySnapshot.docs[0];
+        setError("");
         navigate("/admin/usuarios")
       }
     } catch (err) {
-      console.log('Error buscando el usuario:', err.message);
+      console.log('Error buscando el usuario');
+      setError("Error buscando al usuario");
     }
   };
 
@@ -54,19 +54,21 @@ const Login = () => {
 
             <div className="contra">
               <p>Contraseña</p>
-              <div className="input-container">
+              <div className={`input-container ${error ? 'login-input-error' : ''}`}>
                 <LiaUserShieldSolid className='icon' />
                 <input
                   type="password"
                   onChange={handleInputChange}
+                  value={inputValue}
                   placeholder='Ingrese su contraseña...'
                   required
                 />
               </div>
+              {error && <p className='login_error'>{error}</p>}
             </div>
-
+            
             <button className="login_boton" type='submit'>Iniciar sesión</button>
-          </form>
+          </form> 
         </div>
       </div>
       <div className="gradiante">
