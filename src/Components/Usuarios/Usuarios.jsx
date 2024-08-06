@@ -24,18 +24,18 @@ const Usuarios = () => {
       <thead>
         <tr>
           <th>Nombre</th>
-          <th>Apellido</th>
           <th>Rol</th>
           <th>Contraseña</th>
+          <th>Editar</th>
         </tr>
       </thead>
       <tbody>
         {users.map(user => (
           <tr key={user.id}>
-            <td>{user.nombre}</td>
-            <td>{user.apellido}</td>
+            <td>{`${user.nombre} ${user.apellido}`}</td>
             <td>{user.permisos}</td>
             <td>{user.contrasena}</td>
+            <td><button className="edit">Editar</button></td>
           </tr>
         ))}
       </tbody>

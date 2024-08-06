@@ -8,9 +8,9 @@
 thead th {
     border-right: 1px solid black;
     border-bottom: 1px solid black;
-    padding: 10px 40px;
     background-color: #F5F5F5;
     font-weight: 550;
+    padding: 15px 0px;
 
 }
 
@@ -20,7 +20,7 @@ thead th:last-child {
 
 tbody td {
     text-align: center;
-    padding: 10px;
+    padding: 15px 40px;
     border-right: 1px solid black;
     border-bottom: 1px solid black;
 }

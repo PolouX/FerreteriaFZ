@@ -8,6 +8,7 @@ import Usuarios from '../../Components/Usuarios/Usuarios';
 import Inventario from '../../Components/Inventraio/Inventario';
 import Estadisticas from '../../Components/Estadisticas/Estadisticas';
 import { Routes, Route } from 'react-router-dom';
+import "./Admin.css"
 
 
 const Admin = () => {
