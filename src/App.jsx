@@ -1,36 +1,33 @@
 import React, { useState } from 'react';
-import "./App.css";
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Pages/Login/Login';
 import Usuarios from './Pages/Admin/Usuarios/Usuarios';
-import Sidebar from './Components/Sidebar/Sidebar';
-import Header from './Components/Header/Header';
+import Pedidos from './Pages/Admin/Pedidos/Pedidos';
+import Estadisticas from './Pages/Admin/Estadisticas/Estadisticas';
+import Clientes from './Pages/Admin/Clientes/Clientes';
+import Inventario from './Pages/Admin/Inventario/Inventario';
+import Credito from './Pages/Admin/Credito/Credito';
+import PrivateRoute from './PrivateRoute';
+import AuthContext from './AuthContext';
 
 function App() {
-
-  const Layout = () => {
-    return(
-      <div className="app_layout">
-        <Sidebar />
-        <div className='app_content'>
-          <Header />
-          <Routes>
-            <Route path="usuarios" element={<Usuarios />} />
-          </Routes>
-        </div>
-      </div>
-    )
-  }
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   return (
-    <Router>
-      <Routes>
-        <Route path='/' element={<Navigate to="/login" />}/>
-        <Route path="/login" element={<Login />} />
-        <Route path="/admin/*" element={<Layout />} />
-      </Routes>
-    </Router>
-  )
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/admin/usuarios" element={<PrivateRoute><Usuarios /></PrivateRoute>} />
+          <Route path="/admin/pedidos" element={<PrivateRoute><Pedidos /></PrivateRoute>} />
+          <Route path="/admin/estadisticas" element={<PrivateRoute><Estadisticas /></PrivateRoute>} />
+          <Route path="/admin/clientes" element={<PrivateRoute><Clientes /></PrivateRoute>} />
+          <Route path="/admin/inventario" element={<PrivateRoute><Inventario /></PrivateRoute>} />
+          <Route path="/admin/credito" element={<PrivateRoute><Credito /></PrivateRoute>} />
+        </Routes>
+      </Router>
+    </AuthContext.Provider>
+  );
 }
 
 export default App;

@@ -1,39 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import './Login.css';
 import { LiaUserShieldSolid } from "react-icons/lia";
 import { useNavigate } from 'react-router-dom';
-
 import { db } from '../../firebaseConfig';
-import { doc, getDocs, collection, query, where } from 'firebase/firestore';
-
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import AuthContext from '../../AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { setIsAuthenticated } = useContext(AuthContext);
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState("");
 
-  const handleInputChange = async (e) => {
+  const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log(inputValue);
+    console.log("Iniciar sesión clicado");
 
     const usuarios = collection(db, "usuarios");
-    const q = query(usuarios, where('contrasena', '==', inputValue));
+    const q = query(usuarios, where('contraseña', '==', inputValue));
 
     try {
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
-        console.log('Contrasenia incorrecta');
+        console.log('Contraseña incorrecta');
         setInputValue("");
-        setError("¡Contraseña incorrecta!")
+        setError("¡Contraseña incorrecta!");
       } else {
         const doc = querySnapshot.docs[0];
+        console.log('Documento encontrado');
+        console.log('Datos del usuario:', doc.data());
         setError("");
-        navigate("/admin/usuarios")
+        setIsAuthenticated(true);
+        navigate("/admin/usuarios");
       }
     } catch (err) {
       console.log('Error buscando el usuario');
