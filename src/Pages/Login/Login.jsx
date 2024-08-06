@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import './Login.css';
 import { LiaUserShieldSolid } from "react-icons/lia";
 import { useNavigate } from 'react-router-dom';
-
 import { db } from '../../firebaseConfig';
 import { doc, getDocs, collection, query, where } from 'firebase/firestore';
-
+import { useAuth } from '../../AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState("");
 
@@ -27,13 +27,14 @@ const Login = () => {
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
-        console.log('Contrasenia incorrecta');
+        console.log('Contraseña incorrecta');
         setInputValue("");
         setError("¡Contraseña incorrecta!")
       } else {
         const doc = querySnapshot.docs[0];
         setError("");
-        navigate("/admin/usuarios")
+        login(); // Establecer el estado de autenticación en verdadero
+        navigate("/admin/usuarios");
       }
     } catch (err) {
       console.log('Error buscando el usuario');
