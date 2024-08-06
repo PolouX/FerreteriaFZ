@@ -12,6 +12,10 @@ import Inventario from './Pages/Admin/Inventario/Inventario';
 import Credito from './Pages/Admin/Credito/Credito';
 import Sidebar from './Components/Sidebar/Sidebar';
 import Header from './Components/Header/Header';
+<<<<<<< HEAD
+=======
+import "./App.css";
+>>>>>>> 9aa36186dd537d5206ee06e8d1b1d45929f36989
 
 const Layout = () => {
   return (
