@@ -1,0 +1,11 @@
+.admin_layout {
+    display: flex;
+}
+
+.admin_content {
+    position: absolute;
+    width: 93.75%;
+    top: 0;
+    left: 90px;
+    padding: 20px 35px;
+}

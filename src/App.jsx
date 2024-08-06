@@ -1,3 +1,4 @@
+import "./App.css";
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './AuthContext';
@@ -30,6 +31,10 @@ const Layout = () => {
     </div>
   );
 };
+import Admin from './Pages/Admin/Admin';
+import "./App.css";
+
+
 
 const App = () => {
   return (
@@ -38,7 +43,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/admin/*" element={<PrivateRoute><Layout /></PrivateRoute>} />
+          <Route path="/admin/*" element={<PrivateRoute><Admin /></PrivateRoute>} />
         </Routes>
       </Router>
     </AuthProvider>
