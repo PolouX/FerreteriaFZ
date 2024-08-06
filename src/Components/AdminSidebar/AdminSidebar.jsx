@@ -1,6 +1,6 @@
 import React, { useState } from 'react'; 
 import { Link, useLocation } from 'react-router-dom';
-import './Sidebar.css';
+import './AdminSidebar.css';
 import {IonIcon} from "@ionic/react";
 import { cubeOutline, pieChartOutline, peopleOutline, layersOutline, walletOutline, chatbubblesOutline, notificationsOutline } from 'ionicons/icons';
 

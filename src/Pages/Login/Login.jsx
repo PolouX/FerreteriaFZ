@@ -11,7 +11,6 @@ const Login = () => {
   const { setIsAuthenticated } = useContext(AuthContext);
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState("");
-
   const handleInputChange = async (e) => {
     setInputValue(e.target.value);
   };
@@ -34,6 +33,7 @@ const Login = () => {
         const doc = querySnapshot.docs[0];
         setError("");
         setIsAuthenticated(true);
+        
         navigate("/admin/usuarios");
       }
     } catch (err) {

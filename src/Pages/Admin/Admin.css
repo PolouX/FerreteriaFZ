@@ -1,0 +1,7 @@
+.admin_layout {
+    display: flex;
+}
+
+.admin_content {
+    background-color: red;
+}

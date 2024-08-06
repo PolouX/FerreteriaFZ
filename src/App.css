@@ -1,14 +1,2 @@
-.app_layout {
-    display: flex;
-    background-color: blue;
-    width: 90%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    flex-direction: column;
-}
 
-.app_content {
-    background-color: red;
-}
   
