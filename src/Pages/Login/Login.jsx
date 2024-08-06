@@ -12,16 +12,16 @@ const Login = () => {
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState("");
 
-  const handleInputChange = (e) => {
+  const handleInputChange = async (e) => {
     setInputValue(e.target.value);
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Iniciar sesión clicado");
+    console.log('Contraseña ingresada:', inputValue);
 
     const usuarios = collection(db, "usuarios");
-    const q = query(usuarios, where('contraseña', '==', inputValue));
+    const q = query(usuarios, where('contrasena', '==', inputValue));
 
     try {
       const querySnapshot = await getDocs(q);
@@ -32,14 +32,13 @@ const Login = () => {
         setError("¡Contraseña incorrecta!");
       } else {
         const doc = querySnapshot.docs[0];
-        console.log('Documento encontrado');
         console.log('Datos del usuario:', doc.data());
         setError("");
         setIsAuthenticated(true);
         navigate("/admin/usuarios");
       }
     } catch (err) {
-      console.log('Error buscando el usuario');
+      console.log('Error buscando el usuario:', err);
       setError("Error buscando al usuario");
     }
   };
