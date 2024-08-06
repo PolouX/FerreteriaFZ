@@ -11,15 +11,16 @@ import PrivateRoute from './PrivateRoute';
 import { AuthProvider } from './AuthContext';
 import Sidebar from './Components/Sidebar/Sidebar';
 import Header from './Components/Header/Header';
+import "./App.css"
 
 const App = () => {
   const Layout = () => {
     return (
-      <div>
+      <div className="app_layout">
         <Sidebar />
         <Header />
-        <div>
-          <Routes className="app-content">
+        <div className="app_content">
+          <Routes>
             <Route path="usuarios" element={<Usuarios />} />
             <Route path="pedidos" element={<Pedidos />} />
             <Route path="estadisticas" element={<Estadisticas />} />

@@ -4,7 +4,7 @@ import React from 'react';
 const Inventario = () => {
   return (
     <div>
-      <h1>Página de Inventario</h1>
+      
     </div>
   );
 }
