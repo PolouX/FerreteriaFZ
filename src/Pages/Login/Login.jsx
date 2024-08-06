@@ -18,7 +18,7 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log('Contraseña ingresada:', inputValue);
+    console.log(inputValue);
 
     const usuarios = collection(db, "usuarios");
     const q = query(usuarios, where('contrasena', '==', inputValue));
@@ -32,13 +32,12 @@ const Login = () => {
         setError("¡Contraseña incorrecta!");
       } else {
         const doc = querySnapshot.docs[0];
-        console.log('Datos del usuario:', doc.data());
         setError("");
         setIsAuthenticated(true);
         navigate("/admin/usuarios");
       }
     } catch (err) {
-      console.log('Error buscando el usuario:', err);
+      console.log('Error buscando el usuario');
       setError("Error buscando al usuario");
     }
   };
