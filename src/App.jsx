@@ -1,3 +1,4 @@
+import "./App.css";
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './AuthContext';
@@ -5,6 +6,7 @@ import PrivateRoute from './PrivateRoute';
 import Login from './Pages/Login/Login';
 import Admin from './Pages/Admin/Admin';
 import "./App.css";
+
 
 
 const App = () => {
