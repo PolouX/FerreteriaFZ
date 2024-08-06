@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './Pages/Login/Login';
 import Usuarios from './Pages/Admin/Usuarios/Usuarios';
 import Pedidos from './Pages/Admin/Pedidos/Pedidos';
@@ -36,6 +36,7 @@ const App = () => {
     <AuthProvider>
       <Router>
         <Routes>
+          <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin/*" element={<PrivateRoute><Layout /></PrivateRoute>} />
         </Routes>
