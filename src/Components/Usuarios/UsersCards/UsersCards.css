@@ -1,0 +1,100 @@
+.userCards-container {
+    margin-top: 30px;
+    width: calc(100% - 450px);
+}
+
+.cards-filters button {
+    padding-bottom: 6px;
+    background-color: none;
+    font-size: 16px;
+    padding: 5px 10px;
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid red;
+    cursor: pointer;
+}
+
+
+.cards-users {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 36px;
+    margin-top: 40px;
+}
+
+.user-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 6px 6px rgba(0, 0, 0, 0.2);
+    padding: 20px 20px;
+    height: 214px;
+    width: 160px;
+    text-align: center;
+    color: white;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.Admin {
+    background: linear-gradient(135deg, #FF6F6F, #D92332, #B30000);
+}
+
+.zonaA {
+    background: linear-gradient(135deg, #40E0D0, #1E90FF);
+
+}
+
+.zonaBC {
+    background: rgb(138,223,255);
+background: linear-gradient(139deg, rgba(138,223,255,1) 0%, rgba(0,14,255,1) 100%);
+
+}
+
+.empaquetado {
+    background: linear-gradient(135deg, #000080, #001a66, #003366, #004080, #0055a3, #0073e6, #3399ff);
+
+
+}
+
+.jefeAlmacen {
+    background: linear-gradient(135deg, #FF0000, #FF4D4D, #FF7F7F);
+}
+
+.credito {
+    background: rgb(233,104,226);
+background: linear-gradient(139deg, rgba(233,104,226,1) 0%, rgba(114,33,255,1) 100%);
+
+}
+
+.clientes {
+    background: linear-gradient(135deg, #8B008B, #9400D3, #9932CC);
+}
+
+.jefeAtencionClientes {
+    
+    background: linear-gradient(135deg, #D10000, #FF1493, #FF69B4);
+}
+
+
+.user-card:hover {
+    cursor: pointer;
+}
+
+.user-card span {
+    font-weight: 600;
+    margin-bottom: 0px;
+    font-size: 14px;
+}
+
+.user-icon {
+    font-size: 100px;
+    margin-top: 5px;
+}
+
+.user-card:hover {
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño de la tarjeta */
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3), 0 10px 10px rgba(0, 0, 0, 0.2); /* Aplica una sombra más pronunciada */
+    cursor: pointer;
+}
+

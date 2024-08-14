@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import './AdminSidebar.css';
 import {IonIcon} from "@ionic/react";
 import { cubeOutline, pieChartOutline, peopleOutline, layersOutline, walletOutline, chatbubblesOutline, notificationsOutline } from 'ionicons/icons';
+import { RiCustomerService2Line } from "react-icons/ri";
 
 
 const Sidebar = () => {

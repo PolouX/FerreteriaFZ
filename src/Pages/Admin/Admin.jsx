@@ -4,7 +4,7 @@ import AdminSidebar from '../../Components/AdminSidebar/AdminSidebar';
 import Clientes from '../../Components/Clientes/Clientes';
 import Pedidos from '../../Components/Pedidos/Pedidos';
 import Credito from '../../Components/Credito/Credito';
-import Usuarios from '../../Components/Usuarios/Usuarios';
+import UserLayout from '../../Components/Usuarios/UserLayout/UserLayout';
 import Inventario from '../../Components/Inventraio/Inventario';
 import Estadisticas from '../../Components/Estadisticas/Estadisticas';
 import { Routes, Route } from 'react-router-dom';
@@ -16,9 +16,9 @@ const Admin = () => {
     <div className="admin_layout">
       <AdminSidebar />
       <div className="admin_content">
-        <Header />
+        <Header className='admin-header'/>
         <Routes>
-          <Route path="usuarios" element={<Usuarios />} />
+          <Route path="usuarios" element={<UserLayout />} />
           <Route path="pedidos" element={<Pedidos />} />
           <Route path="estadisticas" element={<Estadisticas />} />
           <Route path="clientes" element={<Clientes />} />
