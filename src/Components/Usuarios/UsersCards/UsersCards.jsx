@@ -3,6 +3,7 @@ import './UsersCards.css';
 import { db } from '../../../firebaseConfig';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { PiUserCircleCheck } from "react-icons/pi";
+import AddUser from '../AddUser/AddUser';
 
 const UsersCards = () => {
   const [users, setUsers] = useState([]);
@@ -56,12 +57,11 @@ const UsersCards = () => {
     <>
       <div className="userCards-container">
         <div className="cards-filters">
-            <button id='user-filters-todos' onClick={() => setFilter('Todos')}>Todos</button>
-            <button id='user-filters-almacen' onClick={() => setFilter('Almacen')}>Almacen</button>
-            <button id='user-filter-admin' onClick={() => setFilter('Administrativo')}>Administrativo</button>
-            <button id='user-filters-oficina' onClick={() => setFilter('Oficina')}>Oficina</button>
+            <button id='user-filters-todos' className={filter === "Todos" ? "user-filter-selected" : ""} onClick={() => setFilter('Todos')}>Todos</button>
+            <button id='user-filters-almacen' className={filter === "Almacen" ? "user-filter-selected" : ""} onClick={() => setFilter('Almacen')}>Almacen</button>
+            <button id='user-filter-admin' className={filter === "Administrativo" ? "user-filter-selected" : ""} onClick={() => setFilter('Administrativo')}>Administrativo</button>
+            <button id='user-filters-oficina' className={filter === "Oficina" ? "user-filter-selected" : ""} onClick={() => setFilter('Oficina')}>Oficina</button>
         </div>
-        
         <div className='cards-users'>
           {filteredUsers.map(user => (
             <div className={`user-card 
@@ -76,8 +76,9 @@ const UsersCards = () => {
             
             }`} key={user.id}>
               <PiUserCircleCheck className='user-icon' />
-              <span className="user-nombre">{user.nombre}</span><br />
-              <span className="user-apellido">{user.apellido}</span>
+              <span className="user-nombre-apellido">
+                {user.nombre} <br /> {user.apellido}
+              </span>
             </div>
           ))}
         </div>

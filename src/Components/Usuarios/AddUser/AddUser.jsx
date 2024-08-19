@@ -67,138 +67,134 @@ const AddUser = () => {
 
   return (
     <>
+
       <form onSubmit={handleSubmit} className="newuser-card">
-        <h2>Agregar usuario</h2>
-        <div className="adduser-inputs">
-          <div className="adduser-datos">
-            <div className="adduser-nombre">
-              <p>Nombre:</p>
+          <h2>Agregar usuario</h2>
+            <div className="adduser-datos">
+              <div className="adduser-nombre">
+                <input 
+                  type="text" 
+                  placeholder='Nombre...' 
+                  value={addNombre}
+                  onChange={(e) => setAddNombre(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="adduser-apellido">
+                <input 
+                  type="text" 
+                  placeholder='Apellido...' 
+                  value={addApellido}
+                  onChange={(e) => setAddApellido(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+            <div className="adduser-roles">
+              <p>Permisos:</p>
+              <div className="adduser-roles-row1">
+                <div className="adduser-rolebutton">
+                  <button
+                    type="button"
+                    className={`adduser-roleicon ${isSelected('zonaA') ? 'selected' : ''}`}
+                    id='zonaA'
+                    onClick={() => handleRoleClick('zonaA')}
+                  >
+                    A
+                  </button>
+                  <span>Zona A</span>
+                </div>
+                <div className="adduser-rolebutton">
+                  <button
+                    type="button"
+                    id='zonaBC'
+                    className={`adduser-roleicon ${isSelected('zonaBC') ? 'selected' : ''}`}
+                    onClick={() => handleRoleClick('zonaBC')}
+                  >
+                    BC
+                  </button>
+                  <span>Zona BC</span>
+                </div>
+                <div className="adduser-rolebutton">
+                  <button
+                    type="button"
+                    id='empaquetado'
+                    className={`adduser-roleicon ${isSelected('empaquetado') ? 'selected' : ''}`}
+                    onClick={() => handleRoleClick('empaquetado')}
+                  >
+                    <GoPackageDependencies />
+                  </button>
+                  <span>Empaquetado</span>
+                </div>
+                <div className="adduser-rolebutton">
+                  <button
+                    type="button"
+                    id='jefeAlmacen'
+                    className={`adduser-roleicon ${isSelected('jefeAlmacen') ? 'selected' : ''}`}
+                    onClick={() => handleRoleClick('jefeAlmacen')}
+                  >
+                    <IonIcon icon={cubeOutline} />
+                  </button>
+                  <span>Jefe de Almacén</span>
+                </div>
+              </div>
+              <div className="adduser-roles-row2">
+                <div className="adduser-rolebutton">
+                  <button
+                    type="button"
+                    id='credito'
+                    className={`adduser-roleicon ${isSelected('credito') ? 'selected' : ''}`}
+                    onClick={() => handleRoleClick('credito')}
+                  >
+                    <IonIcon icon={walletOutline} />
+                  </button>
+                  <span>Crédito</span>
+                </div>
+                <div className="adduser-rolebutton">
+                  <button
+                    type="button"
+                    id='clientes'
+                    className={`adduser-roleicon ${isSelected('clientes') ? 'selected' : ''}`}
+                    onClick={() => handleRoleClick('clientes')}
+                  >
+                    <IonIcon icon={chatbubbleOutline} />
+                  </button>
+                  <span>Atención a Clientes</span>
+                </div>
+                <div className="adduser-rolebutton">
+                  <button
+                    type="button"
+                    id='jefeAtencionClientes'
+                    className={`adduser-roleicon ${isSelected('jefeAtencionClientes') ? 'selected' : ''}`}
+                    onClick={() => handleRoleClick('jefeAtencionClientes')}
+                  >
+                    <RiCustomerService2Line />
+                  </button>
+                  <span>Jefa de Atención a Clientes</span>
+                </div>
+                <div className="adduser-rolebutton">
+                  <button
+                    type="button"
+                    id='admin'
+                    className={`adduser-roleicon ${isSelected('Admin') ? 'selected' : ''}`}
+                    onClick={() => handleRoleClick('Admin')}
+                  >
+                    <LiaUserShieldSolid />
+                  </button>
+                  <span>Admin</span>
+                </div>
+              </div>
+            </div>
+            <div id="adduser-lrg">
               <input 
-                type="text" 
-                placeholder='Nombre...' 
-                value={addNombre}
-                onChange={(e) => setAddNombre(e.target.value)}
-                required
-              />
-            </div>
-            <div className="adduser-apellido">
-              <p>Apellido:</p>
-              <input 
-                type="text" 
-                placeholder='Apellido...' 
-                value={addApellido}
-                onChange={(e) => setAddApellido(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-          <div className="adduser-roles">
-            <p>Permisos:</p>
-            <div className="adduser-roles-row1">
-              <div className="adduser-rolebutton">
-                <button
-                  type="button"
-                  className={`adduser-roleicon ${isSelected('zonaA') ? 'selected' : ''}`}
-                  id='zonaA'
-                  onClick={() => handleRoleClick('zonaA')}
-                >
-                  A
-                </button>
-                <span>Zona A</span>
-              </div>
-              <div className="adduser-rolebutton">
-                <button
-                  type="button"
-                  id='zonaBC'
-                  className={`adduser-roleicon ${isSelected('zonaBC') ? 'selected' : ''}`}
-                  onClick={() => handleRoleClick('zonaBC')}
-                >
-                  BC
-                </button>
-                <span>Zona BC</span>
-              </div>
-              <div className="adduser-rolebutton">
-                <button
-                  type="button"
-                  id='empaquetado'
-                  className={`adduser-roleicon ${isSelected('empaquetado') ? 'selected' : ''}`}
-                  onClick={() => handleRoleClick('empaquetado')}
-                >
-                  <GoPackageDependencies />
-                </button>
-                <span>Empaquetado</span>
-              </div>
-              <div className="adduser-rolebutton">
-                <button
-                  type="button"
-                  id='jefeAlmacen'
-                  className={`adduser-roleicon ${isSelected('jefeAlmacen') ? 'selected' : ''}`}
-                  onClick={() => handleRoleClick('jefeAlmacen')}
-                >
-                  <IonIcon icon={cubeOutline} />
-                </button>
-                <span>Jefe de Almacén</span>
-              </div>
-            </div>
-            <div className="adduser-roles-row2">
-              <div className="adduser-rolebutton">
-                <button
-                  type="button"
-                  id='credito'
-                  className={`adduser-roleicon ${isSelected('credito') ? 'selected' : ''}`}
-                  onClick={() => handleRoleClick('credito')}
-                >
-                  <IonIcon icon={walletOutline} />
-                </button>
-                <span>Crédito</span>
-              </div>
-              <div className="adduser-rolebutton">
-                <button
-                  type="button"
-                  id='clientes'
-                  className={`adduser-roleicon ${isSelected('clientes') ? 'selected' : ''}`}
-                  onClick={() => handleRoleClick('clientes')}
-                >
-                  <IonIcon icon={chatbubbleOutline} />
-                </button>
-                <span>Atención a Clientes</span>
-              </div>
-              <div className="adduser-rolebutton">
-                <button
-                  type="button"
-                  id='jefeAtencionClientes'
-                  className={`adduser-roleicon ${isSelected('jefeAtencionClientes') ? 'selected' : ''}`}
-                  onClick={() => handleRoleClick('jefeAtencionClientes')}
-                >
-                  <RiCustomerService2Line />
-                </button>
-                <span>Jefa de Atención a Clientes</span>
-              </div>
-              <div className="adduser-rolebutton">
-                <button
-                  type="button"
-                  id='admin'
-                  className={`adduser-roleicon ${isSelected('Admin') ? 'selected' : ''}`}
-                  onClick={() => handleRoleClick('Admin')}
-                >
-                  <LiaUserShieldSolid />
-                </button>
-                <span>Admin</span>
-              </div>
-            </div>
-          </div>
-          <div className="adduser-lrg">
-            <p>Contraseña:</p>
-            <input 
-              type="text" 
-              placeholder='Ingrese la contraseña...' 
-              value={addContra}
-              onChange={(e) => setAddContra(e.target.value)}
-              required
-            />
-          </div>
-          <button className="adduser-submit">Agregar</button>
-        </div>
+                  type="text" 
+                  placeholder='Contraseña...' 
+                  value={addContra}
+                  onChange={(e) => setAddContra(e.target.value)}
+                  required
+                />
+            </div>  
+            <button className="adduser-submit">Agregar</button>      
       </form>
     </>
   );

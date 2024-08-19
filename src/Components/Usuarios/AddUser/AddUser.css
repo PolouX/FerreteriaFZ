@@ -1,23 +1,23 @@
 .newuser-card {
-    border: none;
     border-radius: 15px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 6px 6px rgba(0, 0, 0, 0.2);
-    padding: 25px 45px;
-    height: 550px;
-    width: 413px;
     display: flex;
-    position: fixed;
-    right: 49px;
-    top: 120px;
-    flex-direction: column;
     align-items: center;
+    flex-direction: column;
+    justify-content:  center;
     z-index: 0;
     color: rgba(0, 0, 0, 1);
-    border: 2px solid rgba(0, 0, 0, 0.3);
+    background-color: white;
+    width: 357px;
+    height: 467.2774px;
+    position: fixed;
+    top: 183px;
+    right: 51px;
+    padding: 35px 30px;
 }
 
 form h2 {
-    font-size: 22px;
+    font-size: 20px;
     text-align: left;
 }
 
@@ -25,15 +25,10 @@ form h2 {
     display: flex;
     flex-direction: column;
     align-items: left;
-    margin-top: 20px;
-}
-
-.adduser-icon {
-    font-size: 100px;
-    color: rgba(0, 0, 0, 0.7);
 }
 
 .newuser-card input{
+    margin-top: 10px;
     padding: 10px 12px;
     border-radius: 8px;
     outline: none;
@@ -41,8 +36,6 @@ form h2 {
     width: 100%;
     background-color: transparent;
     color: rgba(0, 0, 0, 0.6);
-    margin-top: 4px;
-    height: 45px;
 }
 
 .newuser-card input:focus {
@@ -56,25 +49,18 @@ form h2 {
 
 .adduser-datos {
     display: flex;
+    margin-top: 10px;
 }
 
 .adduser-apellido{
-    margin-left: 15px;
-}
-
-.adduser-lrg {
-    margin-top: 30px;
-}
-
-.adduser-lrg input {
-    height: 49px;
+    margin-left: 5%;
 }
 
 .adduser-submit {
     border-radius: 12px;
     border: none;
     padding: 15px 0px;
-    margin-top: 30px;
+    width: 100%;
     background: linear-gradient(to right, #FF4B4B, #D92332);
     box-shadow: rgba(217, 35, 50, 0.3) 0 -25px 18px -14px inset,
                   rgba(217, 35, 50, 0.25) 0 1px 2px, 
@@ -85,6 +71,7 @@ form h2 {
     color: white;
     font-weight: 650;
     cursor: pointer;
+    margin-top: 7%;
 }
 
 .adduser-roles {
@@ -95,11 +82,12 @@ form h2 {
     display: flex;
     position: relative;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .adduser-roles-row2 {
     margin-top: 30px;
+    margin-bottom: 20px;
 }
 
 .adduser-rolebutton {
@@ -109,16 +97,16 @@ form h2 {
 .adduser-rolebutton button {
     position: relative;
     display: inline-block;
-    width: 45px;
-    height: 45px;
+    width: 42px;
+    height: 42px;
     border: none;
     background-color: white;
     border-radius: 50px;
     font-size: 20px;
-    line-height: 49px;
+    line-height: 47px;
     align-items: center;
     justify-content: center;
-    margin: 0px 17px;
+    margin: 0px 15px;
     border: 1px solid black;
     transition: .3s;
     z-index: 2;
@@ -132,6 +120,9 @@ form h2 {
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
 }
 
+#admin {
+    line-height: 20px;
+}
 .adduser-rolebutton span {
     position: absolute;
     left: 50%;
@@ -145,7 +136,7 @@ form h2 {
 }
 
 .adduser-rolebutton:hover span {
-    transform: translate(-50%, 125%) scale(1);
+    transform: translate(-50%, 110%) scale(1);
 }
 
 .adduser-rolebutton button.selected {
@@ -250,4 +241,13 @@ background: linear-gradient(139deg, rgba(138,223,255,1) 0%, rgba(0,14,255,1) 100
     background: linear-gradient(135deg, #FF6F6F, #D92332, #B30000);
     color: white;
     border: none;
+}
+
+
+#adduser-lrg {
+    width: 100%;
+}
+
+#adduser-lrg input {
+    height: 49px;
 }
