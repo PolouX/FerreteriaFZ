@@ -1,4 +1,5 @@
 .header {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -15,25 +16,29 @@
 }
 
 .header_logout p{
-    font-size: 16px;
+    font-size: 18px;
+    margin-right: 10px;
+    color: black; /* Color para el texto "¡Bienvenido!" */
 }
 
 .logout_boton {
     position: relative;
     display: flex;
-    margin-left: 5px;
     background: linear-gradient(to right, #FF6F6F, #D92332);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
     border: none;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 500;
     cursor: pointer;
-    align-items: center ;
+    align-items: center;
     overflow: hidden;
 }
 
+.logout_boton .user_name {
+    margin-right: 5px;
+}
 
 .logout_boton::before {
     content: "";
@@ -53,14 +58,13 @@
     transform-origin: bottom left;
 }
 
-.logout_boton:hover .logout_icon {
-    transform: rotate(0deg);
-}
-
 .logout_icon {
     color: #D92332;
-    font-size: 18px;
-    margin-left: 3px;
+    font-size: 20px;
     transition: transform 0.6s ease, margin-left 0.3s ease;
     transform: rotate(180deg);
+}
+
+.logout_boton:hover .logout_icon {
+    transform: rotate(0deg);
 }

@@ -7,7 +7,7 @@ import AuthContext from '../../AuthContext';
 
 function Header() {
   const navigate = useNavigate();
-  const { setIsAuthenticated } = useContext(AuthContext);
+  const { setIsAuthenticated, user } = useContext(AuthContext);
 
   const handleLogout = () => {
     setIsAuthenticated(false);
@@ -55,10 +55,14 @@ function Header() {
         <Content />
       </div>
       <div className="header_logout">
-        <p>¡Bienvenido! </p>
-        <button onClick={handleLogout} className="logout_boton">Diego <IonIcon className="logout_icon" icon={logOutOutline} /></button>
+        <p>¡Bienvenido!</p>
+        <button onClick={handleLogout} className="logout_boton">
+          <span className="user_name">{user?.nombre}</span>
+          <IonIcon className="logout_icon" icon={logOutOutline} />
+        </button>
       </div>
     </div>
   );
 }
+
 export default Header;
