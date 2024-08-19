@@ -4,8 +4,8 @@
 
 .admin_content {
     position: absolute;
-    width: 93.75%;
+    right: 0px;
     top: 0;
     left: 90px;
-    padding: 20px 35px;
+    padding: 20px 50px;
 }

@@ -1,0 +1,253 @@
+.newuser-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 6px 6px rgba(0, 0, 0, 0.2);
+    padding: 25px 45px;
+    height: 550px;
+    width: 413px;
+    display: flex;
+    position: fixed;
+    right: 49px;
+    top: 120px;
+    flex-direction: column;
+    align-items: center;
+    z-index: 0;
+    color: rgba(0, 0, 0, 1);
+    border: 2px solid rgba(0, 0, 0, 0.3);
+}
+
+form h2 {
+    font-size: 22px;
+    text-align: left;
+}
+
+.adduser-inputs {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    margin-top: 20px;
+}
+
+.adduser-icon {
+    font-size: 100px;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.newuser-card input{
+    padding: 10px 12px;
+    border-radius: 8px;
+    outline: none;
+    border: 1.8px solid rgba(0, 0, 0, 0.6);
+    width: 100%;
+    background-color: transparent;
+    color: rgba(0, 0, 0, 0.6);
+    margin-top: 4px;
+    height: 45px;
+}
+
+.newuser-card input:focus {
+    border: 2px solid black;
+}
+
+.newuser-card input[type="text"] {
+    color: black;
+    font-weight: 500;
+  }
+
+.adduser-datos {
+    display: flex;
+}
+
+.adduser-apellido{
+    margin-left: 15px;
+}
+
+.adduser-lrg {
+    margin-top: 30px;
+}
+
+.adduser-lrg input {
+    height: 49px;
+}
+
+.adduser-submit {
+    border-radius: 12px;
+    border: none;
+    padding: 15px 0px;
+    margin-top: 30px;
+    background: linear-gradient(to right, #FF4B4B, #D92332);
+    box-shadow: rgba(217, 35, 50, 0.3) 0 -25px 18px -14px inset,
+                  rgba(217, 35, 50, 0.25) 0 1px 2px, 
+                  rgba(217, 35, 50, 0.25) 0 2px 4px, 
+                  rgba(217, 35, 50, 0.25) 0 4px 8px, 
+                  rgba(217, 35, 50, 0.25) 0 8px 16px, 
+                  rgba(217, 35, 50, 0.25) 0 16px 32px;
+    color: white;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.adduser-roles {
+    margin-top: 20px;
+}
+
+.adduser-roles-row1, .adduser-roles-row2 {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.adduser-roles-row2 {
+    margin-top: 30px;
+}
+
+.adduser-rolebutton {
+    position: relative;
+}
+
+.adduser-rolebutton button {
+    position: relative;
+    display: inline-block;
+    width: 45px;
+    height: 45px;
+    border: none;
+    background-color: white;
+    border-radius: 50px;
+    font-size: 20px;
+    line-height: 49px;
+    align-items: center;
+    justify-content: center;
+    margin: 0px 17px;
+    border: 1px solid black;
+    transition: .3s;
+    z-index: 2;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.adduser-rolebutton button:hover {
+    transform: translateY(-6px) scale(1.2);
+    transition: .3s;
+    cursor: pointer;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.adduser-rolebutton span {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: .3s;
+    font-weight: 550;
+    z-index: 0;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.adduser-rolebutton:hover span {
+    transform: translate(-50%, 125%) scale(1);
+}
+
+.adduser-rolebutton button.selected {
+    color: white;
+    background-color: black;
+    border: none;
+}
+
+.adduser-rolebutton #zonaA.selected {
+    background: linear-gradient(135deg, #40E0D0, #1E90FF);
+}
+
+.adduser-rolebutton #zonaBC.selected {
+    background: rgb(138,223,255);
+background: linear-gradient(139deg, rgba(138,223,255,1) 0%, rgba(0,14,255,1) 100%);
+}
+
+.adduser-rolebutton #empaquetado.selected {
+    background: linear-gradient(135deg, #000080, #001a66, #003366, #004080, #0055a3, #0073e6, #3399ff);
+}
+
+.adduser-rolebutton #jefeAlmacen.selected {
+    background: linear-gradient(135deg, #FF0000, #FF4D4D, #FF7F7F);
+}
+
+.adduser-rolebutton #credito.selected {
+    background: rgb(233,104,226);
+background: linear-gradient(139deg, rgba(233,104,226,1) 0%, rgba(114,33,255,1) 100%);
+}
+
+.adduser-rolebutton #clientes.selected {
+    background: linear-gradient(135deg, #8B008B, #9400D3, #9932CC);
+}
+
+.adduser-rolebutton #jefeAtencionClientes.selected {
+    background: linear-gradient(135deg, #D10000, #FF1493, #FF69B4);
+}
+
+.adduser-rolebutton #admin.selected {
+    background: linear-gradient(135deg, #FF6F6F, #D92332, #B30000);
+}
+
+/* Hover Styles */
+
+.adduser-roles-row1 div:nth-child(1) button{
+    line-height: 30px;
+}
+
+.adduser-roles-row1 div:nth-child(2) button{
+    line-height: 30px;
+}
+
+.adduser-roles-row2 div:nth-child(4) button{
+    line-height: 47px;
+}
+
+.adduser-roles-row1 div:nth-child(1) button:hover {
+    background: linear-gradient(135deg, #40E0D0, #1E90FF);
+    color: white;
+    border: none;
+}
+
+.adduser-roles-row1 div:nth-child(2) button:hover {
+    background: rgb(138,223,255);
+background: linear-gradient(139deg, rgba(138,223,255,1) 0%, rgba(0,14,255,1) 100%);
+    color: white;
+    border: none;
+}
+
+.adduser-roles-row1 div:nth-child(3) button:hover {
+    background: linear-gradient(135deg, #000080, #001a66, #003366, #004080, #0055a3, #0073e6, #3399ff);
+    color: white;
+    border: none;
+}
+
+.adduser-roles-row1 div:nth-child(4) button:hover {
+    background: linear-gradient(135deg, #FF0000, #FF4D4D, #FF7F7F);
+    color: white;
+    border: none;
+}
+
+.adduser-roles-row2 div:nth-child(1) button:hover {
+    background: rgb(233,104,226);
+    background: linear-gradient(139deg, rgba(233,104,226,1) 0%, rgba(114,33,255,1) 100%);
+    color: white;
+    border: none;
+}
+
+.adduser-roles-row2 div:nth-child(2) button:hover {
+    background: linear-gradient(135deg, #8B008B, #9400D3, #9932CC);
+    color: white;
+    border: none;
+}
+
+.adduser-roles-row2 div:nth-child(3) button:hover {
+    background: linear-gradient(135deg, #D10000, #FF1493, #FF69B4);
+    color: white;
+    border: none;
+}
+
+.adduser-roles-row2 div:nth-child(4) button:hover {
+    background: linear-gradient(135deg, #FF6F6F, #D92332, #B30000);
+    color: white;
+    border: none;
+}
