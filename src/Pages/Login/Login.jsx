@@ -8,9 +8,10 @@ import AuthContext from '../../AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setIsAuthenticated } = useContext(AuthContext);
+  const { setIsAuthenticated, setUser } = useContext(AuthContext);  // Añadir setUser al contexto
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState("");
+
   const handleInputChange = async (e) => {
     setInputValue(e.target.value);
   };
@@ -31,9 +32,10 @@ const Login = () => {
         setError("¡Contraseña incorrecta!");
       } else {
         const doc = querySnapshot.docs[0];
+        const userData = doc.data();  // Obtén la información del usuario
         setError("");
         setIsAuthenticated(true);
-        
+        setUser(userData);  // Almacena la información del usuario en el contexto
         navigate("/admin/usuarios");
       }
     } catch (err) {
