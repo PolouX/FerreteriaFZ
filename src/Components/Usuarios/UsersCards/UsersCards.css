@@ -1,40 +1,75 @@
 .userCards-container {
-    margin-top: 30px;
-    width: calc(100% - 450px);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    top: 30px;
+    width: calc(100% - 480px);
+    justify-content: center;
+
 }
 
+
 .cards-filters button {
+    height: 40px;
     padding-bottom: 6px;
     background-color: none;
     font-size: 16px;
     padding: 5px 10px;
     background-color: transparent;
     border: none;
-    border-bottom: 2px solid red;
     cursor: pointer;
+    color: rgba(0, 0, 0, 0.7);
+    font-weight: 500;
+    border-bottom: 2px solid rgb(186, 186, 186);
+    transition: all 0.3s;
 }
 
+.cards-filters button:hover {
+    color: black;
+    border-bottom: 2px solid rgb(55, 55, 55);
+    transition: all 0.7s;
+
+}
+
+.cards-filters button.user-filter-selected {
+    border-bottom: 2px solid red;
+    color: black;
+}
+
+.cards-filters button.user-filter-selected:hover {
+    border-radius: 0px;
+    background-color: transparent;
+}
 
 .cards-users {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 164px);
+    grid-template-rows: repeat(2, minmax(100px, 1fr)) auto;
     width: 100%;
     flex-wrap: wrap;
-    gap: 36px;
-    margin-top: 40px;
+    grid-gap: 29px;
+    margin-bottom: 80px;
+    margin-top: 30px;
 }
 
+
 .user-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
     border: none;
     border-radius: 15px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 6px 6px rgba(0, 0, 0, 0.2);
-    padding: 20px 20px;
-    height: 214px;
-    width: 160px;
+    padding: 20% 0% 20% 0%;
     text-align: center;
     color: white;
     overflow: hidden;
+    aspect-ratio: .75;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-sizing: border-box;
 }
+
 
 .Admin {
     background: linear-gradient(135deg, #FF6F6F, #D92332, #B30000);
@@ -83,13 +118,15 @@ background: linear-gradient(139deg, rgba(233,104,226,1) 0%, rgba(114,33,255,1) 1
 
 .user-card span {
     font-weight: 600;
-    margin-bottom: 0px;
-    font-size: 14px;
+    font-size: 90%;
+    line-height: 120%;
+    margin-top: 20px;
+    margin-bottom: 3%;
 }
 
 .user-icon {
-    font-size: 100px;
-    margin-top: 5px;
+    font-size: 800%;
+    margin-bottom: 20px;
 }
 
 .user-card:hover {

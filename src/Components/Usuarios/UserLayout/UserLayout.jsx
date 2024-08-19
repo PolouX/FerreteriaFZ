@@ -8,7 +8,7 @@ const UserLayout = () => {
     <>
         <div className="user-layout" >
             <UsersCards className="userlayout-cards"></UsersCards>
-            <AddUser className="userlayout-form"></AddUser>
+            <AddUser></AddUser>
         </div>       
     </>
   )
