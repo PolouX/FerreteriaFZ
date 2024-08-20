@@ -18,10 +18,35 @@ const AddUser = ({ selectedUser }) => {
       setAddApellido(selectedUser.apellido);
       setAddContra(selectedUser.contrasena);
       setSelectedRoles(selectedUser.permisos.split(', '));
+    } else {
+      // Limpiar el formulario cuando no hay usuario seleccionado
+      setAddNombre('');
+      setAddApellido('');
+      setAddContra('');
+      setSelectedRoles([]);
     }
   }, [selectedUser]);
 
   const isSelected = (role) => selectedRoles.includes(role);
+
+  if (!selectedUser) {
+    return (
+      <div className="newuser-card">
+        <p>No hay ningún usuario seleccionado.</p>
+        <p>Seleccione un usuario para ver su información o</p>
+        <button 
+          className="adduser-submit" 
+          onClick={() => {
+            setAddNombre('');
+            setAddApellido('');
+            setAddContra('');
+            setSelectedRoles([]);
+          }}>
+          Crear Nuevo Usuario
+        </button>
+      </div>
+    );
+  }
 
   return (
     <form className="newuser-card">
@@ -32,7 +57,7 @@ const AddUser = ({ selectedUser }) => {
             type="text" 
             placeholder='Nombre...' 
             value={addNombre}
-            readOnly
+            readOnly={!selectedUser} // Hacer editable solo si no hay un usuario seleccionado
           />
         </div>
         <div className="adduser-apellido">
@@ -40,7 +65,7 @@ const AddUser = ({ selectedUser }) => {
             type="text" 
             placeholder='Apellido...' 
             value={addApellido}
-            readOnly
+            readOnly={!selectedUser} // Hacer editable solo si no hay un usuario seleccionado
           />
         </div>
       </div>
@@ -52,7 +77,7 @@ const AddUser = ({ selectedUser }) => {
               type="button"
               className={`adduser-roleicon ${isSelected('zonaA') ? 'selected' : ''}`}
               id='zonaA'
-              disabled
+              disabled={!selectedUser}
             >
               A
             </button>
@@ -63,7 +88,7 @@ const AddUser = ({ selectedUser }) => {
               type="button"
               id='zonaBC'
               className={`adduser-roleicon ${isSelected('zonaBC') ? 'selected' : ''}`}
-              disabled
+              disabled={!selectedUser}
             >
               BC
             </button>
@@ -74,7 +99,7 @@ const AddUser = ({ selectedUser }) => {
               type="button"
               id='empaquetado'
               className={`adduser-roleicon ${isSelected('empaquetado') ? 'selected' : ''}`}
-              disabled
+              disabled={!selectedUser}
             >
               <GoPackageDependencies />
             </button>
@@ -85,7 +110,7 @@ const AddUser = ({ selectedUser }) => {
               type="button"
               id='jefeAlmacen'
               className={`adduser-roleicon ${isSelected('jefeAlmacen') ? 'selected' : ''}`}
-              disabled
+              disabled={!selectedUser}
             >
               <IonIcon icon={cubeOutline} />
             </button>
@@ -98,7 +123,7 @@ const AddUser = ({ selectedUser }) => {
               type="button"
               id='credito'
               className={`adduser-roleicon ${isSelected('credito') ? 'selected' : ''}`}
-              disabled
+              disabled={!selectedUser}
             >
               <IonIcon icon={walletOutline} />
             </button>
@@ -109,7 +134,7 @@ const AddUser = ({ selectedUser }) => {
               type="button"
               id='clientes'
               className={`adduser-roleicon ${isSelected('clientes') ? 'selected' : ''}`}
-              disabled
+              disabled={!selectedUser}
             >
               <IonIcon icon={chatbubbleOutline} />
             </button>
@@ -120,7 +145,7 @@ const AddUser = ({ selectedUser }) => {
               type="button"
               id='jefeAtencionClientes'
               className={`adduser-roleicon ${isSelected('jefeAtencionClientes') ? 'selected' : ''}`}
-              disabled
+              disabled={!selectedUser}
             >
               <RiCustomerService2Line />
             </button>
@@ -131,7 +156,7 @@ const AddUser = ({ selectedUser }) => {
               type="button"
               id='admin'
               className={`adduser-roleicon ${isSelected('Admin') ? 'selected' : ''}`}
-              disabled
+              disabled={!selectedUser}
             >
               <LiaUserShieldSolid />
             </button>
@@ -144,7 +169,7 @@ const AddUser = ({ selectedUser }) => {
           type="text" 
           placeholder='Contraseña...' 
           value={addContra}
-          readOnly
+          readOnly={!selectedUser} // Hacer editable solo si no hay un usuario seleccionado
         />
       </div>
     </form>

@@ -7,6 +7,7 @@ import { PiUserCircleCheck } from "react-icons/pi";
 const UsersCards = ({ onSelectUser }) => {
   const [users, setUsers] = useState([]);
   const [filter, setFilter] = useState('Todos');
+  const [selectedUserId, setSelectedUserId] = useState(null); // Para almacenar el ID del usuario seleccionado
 
   // Orden de prioridad para los permisos
   const permissionOrder = {
@@ -52,6 +53,16 @@ const UsersCards = ({ onSelectUser }) => {
     return false;
   });
 
+  const handleUserClick = (user) => {
+    if (selectedUserId === user.id) {
+      setSelectedUserId(null); // Deseleccionar si ya está seleccionado
+      onSelectUser(null); // Limpiar la información en el formulario
+    } else {
+      setSelectedUserId(user.id); // Seleccionar el usuario
+      onSelectUser(user); // Pasar la información al componente padre
+    }
+  };
+
   return (
     <div className="userCards-container">
       <div className="cards-filters">
@@ -63,9 +74,9 @@ const UsersCards = ({ onSelectUser }) => {
       <div className='cards-users'>
         {filteredUsers.map(user => (
           <div
-            className={`user-card ${user.permisos}`}
+            className={`user-card ${user.permisos} ${selectedUserId === user.id ? 'selected' : ''}`} // Aplicar la clase 'selected' si está seleccionado
             key={user.id}
-            onClick={() => onSelectUser(user)}  // Llamar a la función onSelectUser al hacer clic en un usuario
+            onClick={() => handleUserClick(user)}
           >
             <PiUserCircleCheck className='user-icon' />
             <span className="user-nombre-apellido">
