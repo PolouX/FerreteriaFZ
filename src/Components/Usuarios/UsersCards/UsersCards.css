@@ -134,3 +134,10 @@ background: linear-gradient(139deg, rgba(233,104,226,1) 0%, rgba(114,33,255,1) 1
     cursor: pointer;
 }
 
+.user-card.selected {
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+    background: linear-gradient(to right, #FFD700, #FFA500); /* Gradiente dorado */
+    color: white;
+    padding: 5px;
+}
