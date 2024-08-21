@@ -5,19 +5,14 @@ import { GoPackageDependencies } from "react-icons/go";
 import { LiaUserShieldSolid } from "react-icons/lia";
 import { cubeOutline, chatbubbleOutline, walletOutline } from 'ionicons/icons';
 import { RiCustomerService2Line } from "react-icons/ri";
-import { db } from '../../../firebaseConfig'; // Importa la configuración de Firebase
-import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
+import { db } from '../../../firebaseConfig'; 
+import { collection, addDoc, updateDoc, doc, query, where, getDocs } from "firebase/firestore";
 
-const AddUser = ({ selectedUser, setSelectedUser }) => {  // Recibe setSelectedUser como prop
+const AddUser = ({ selectedUser, setSelectedUser }) => {  
   const [addNombre, setAddNombre] = useState('');
   const [addApellido, setAddApellido] = useState('');
   const [addContra, setAddContra] = useState('');
   const [selectedRoles, setSelectedRoles] = useState([]);
-
-  const [isFormValid, setIsFormValid] = useState(false);
-
-  const combinableRoles = ["zonaA", "zonaBC", "empaquetado"];
-  const uniqueRoles = ["Admin", "jefeAlmacen", "credito", "clientes", "jefeAtencionClientes"];
 
   useEffect(() => {
     if (selectedUser) {
@@ -33,31 +28,35 @@ const AddUser = ({ selectedUser, setSelectedUser }) => {  // Recibe setSelectedU
     }
   }, [selectedUser]);
 
-  useEffect(() => {
-    // Validar si todos los campos están llenos y al menos un rol está seleccionado
-    const isValid = addNombre && addApellido && addContra && selectedRoles.length > 0;
-    setIsFormValid(isValid);
-  }, [addNombre, addApellido, addContra, selectedRoles]);
-
   const isSelected = (role) => selectedRoles.includes(role);
 
   const handleRoleToggle = (role) => {
-    if (combinableRoles.includes(role)) {
-      setSelectedRoles((prevRoles) => {
-        const newRoles = prevRoles.filter(r => !uniqueRoles.includes(r));
-        if (newRoles.includes(role)) {
-          return newRoles.filter(r => r !== role);
-        } else {
-          return [...newRoles, role];
-        }
-      });
-    } else {
-      setSelectedRoles([role]);
-    }
+    setSelectedRoles((prevRoles) => {
+      if (prevRoles.includes(role)) {
+        return prevRoles.filter(r => r !== role);
+      } else {
+        return [...prevRoles, role];
+      }
+    });
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Evitar que la página se recargue
+    e.preventDefault();
+
+    // Verificar si todos los campos están llenos
+    if (!addNombre || !addApellido || !addContra || selectedRoles.length === 0) {
+      window.alert("Por favor, completa todos los campos del formulario.");
+      return;
+    }
+
+    // Verificar si la contraseña ya existe en la base de datos
+    const q = query(collection(db, "usuarios"), where("contrasena", "==", addContra));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty && (!selectedUser || (selectedUser && querySnapshot.docs[0].id !== selectedUser.id))) {
+      window.alert("La contraseña ya está en uso. Por favor, elige una contraseña diferente.");
+      return;
+    }
 
     const newUser = {
       nombre: addNombre,
@@ -68,24 +67,21 @@ const AddUser = ({ selectedUser, setSelectedUser }) => {  // Recibe setSelectedU
 
     try {
       if (selectedUser) {
-        // Actualizar el usuario existente en Firestore
         const userDocRef = doc(db, "usuarios", selectedUser.id);
         await updateDoc(userDocRef, newUser);
       } else {
-        // Crear un nuevo usuario en Firestore
-        const docRef = await addDoc(collection(db, "usuarios"), newUser);
-        console.log("Usuario agregado con ID: ", docRef.id);
+        await addDoc(collection(db, "usuarios"), newUser);
       }
 
-      // Limpia el formulario y restablece selectedUser después de crear o actualizar el usuario
+      // Limpiar el formulario
       setAddNombre('');
       setAddApellido('');
       setAddContra('');
       setSelectedRoles([]);
-      setSelectedUser(null); // Restablecer el estado de selectedUser a null
+      setSelectedUser(null);
     } catch (error) {
       console.error("Error al guardar el usuario: ", error);
-      alert(`Error al guardar el usuario: ${error.message || 'Error desconocido'}`);
+      window.alert(`Error al guardar el usuario: ${error.message || 'Error desconocido'}`);
     }
   };
 
@@ -196,7 +192,7 @@ const AddUser = ({ selectedUser, setSelectedUser }) => {  // Recibe setSelectedU
             <button
               type="button"
               id='admin'
-              className={`adduser-roleicon ${isSelected('admin') ? 'selected' : ''}`}
+              className={`adduser-roleicon ${isSelected('Admin') ? 'selected' : ''}`}
               onClick={() => handleRoleToggle('Admin')}
             >
               <LiaUserShieldSolid />
@@ -216,7 +212,6 @@ const AddUser = ({ selectedUser, setSelectedUser }) => {  // Recibe setSelectedU
       <button 
         type="submit" 
         className="adduser-submit"
-        disabled={!isFormValid} // Deshabilitar el botón si el formulario no es válido
       >
         {selectedUser ? 'Guardar Cambios' : 'Crear Usuario'}
       </button>
