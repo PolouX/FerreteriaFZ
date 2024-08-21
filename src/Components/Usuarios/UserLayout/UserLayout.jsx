@@ -9,7 +9,7 @@ const UserLayout = () => {
   return (
     <div className="user-layout">
       <UsersCards onSelectUser={setSelectedUser} />
-      <AddUser selectedUser={selectedUser} />
+      <AddUser selectedUser={selectedUser} setSelectedUser={setSelectedUser} />
     </div>
   );
 };

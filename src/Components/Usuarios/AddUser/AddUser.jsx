@@ -5,12 +5,19 @@ import { GoPackageDependencies } from "react-icons/go";
 import { LiaUserShieldSolid } from "react-icons/lia";
 import { cubeOutline, chatbubbleOutline, walletOutline } from 'ionicons/icons';
 import { RiCustomerService2Line } from "react-icons/ri";
+import { db } from '../../../firebaseConfig'; // Importa la configuración de Firebase
+import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
 
-const AddUser = ({ selectedUser }) => {
+const AddUser = ({ selectedUser, setSelectedUser }) => {  // Recibe setSelectedUser como prop
   const [addNombre, setAddNombre] = useState('');
   const [addApellido, setAddApellido] = useState('');
   const [addContra, setAddContra] = useState('');
   const [selectedRoles, setSelectedRoles] = useState([]);
+
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  const combinableRoles = ["zonaA", "zonaBC", "empaquetado"];
+  const uniqueRoles = ["Admin", "jefeAlmacen", "credito", "clientes", "jefeAtencionClientes"];
 
   useEffect(() => {
     if (selectedUser) {
@@ -19,7 +26,6 @@ const AddUser = ({ selectedUser }) => {
       setAddContra(selectedUser.contrasena);
       setSelectedRoles(selectedUser.permisos.split(', '));
     } else {
-      // Limpiar el formulario cuando no hay usuario seleccionado
       setAddNombre('');
       setAddApellido('');
       setAddContra('');
@@ -27,37 +33,72 @@ const AddUser = ({ selectedUser }) => {
     }
   }, [selectedUser]);
 
+  useEffect(() => {
+    // Validar si todos los campos están llenos y al menos un rol está seleccionado
+    const isValid = addNombre && addApellido && addContra && selectedRoles.length > 0;
+    setIsFormValid(isValid);
+  }, [addNombre, addApellido, addContra, selectedRoles]);
+
   const isSelected = (role) => selectedRoles.includes(role);
 
-  if (!selectedUser) {
-    return (
-      <div className="newuser-card">
-        <p>No hay ningún usuario seleccionado.</p>
-        <p>Seleccione un usuario para ver su información o</p>
-        <button 
-          className="adduser-submit" 
-          onClick={() => {
-            setAddNombre('');
-            setAddApellido('');
-            setAddContra('');
-            setSelectedRoles([]);
-          }}>
-          Crear Nuevo Usuario
-        </button>
-      </div>
-    );
-  }
+  const handleRoleToggle = (role) => {
+    if (combinableRoles.includes(role)) {
+      setSelectedRoles((prevRoles) => {
+        const newRoles = prevRoles.filter(r => !uniqueRoles.includes(r));
+        if (newRoles.includes(role)) {
+          return newRoles.filter(r => r !== role);
+        } else {
+          return [...newRoles, role];
+        }
+      });
+    } else {
+      setSelectedRoles([role]);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Evitar que la página se recargue
+
+    const newUser = {
+      nombre: addNombre,
+      apellido: addApellido,
+      contrasena: addContra,
+      permisos: selectedRoles.join(', '),
+    };
+
+    try {
+      if (selectedUser) {
+        // Actualizar el usuario existente en Firestore
+        const userDocRef = doc(db, "usuarios", selectedUser.id);
+        await updateDoc(userDocRef, newUser);
+      } else {
+        // Crear un nuevo usuario en Firestore
+        const docRef = await addDoc(collection(db, "usuarios"), newUser);
+        console.log("Usuario agregado con ID: ", docRef.id);
+      }
+
+      // Limpia el formulario y restablece selectedUser después de crear o actualizar el usuario
+      setAddNombre('');
+      setAddApellido('');
+      setAddContra('');
+      setSelectedRoles([]);
+      setSelectedUser(null); // Restablecer el estado de selectedUser a null
+    } catch (error) {
+      console.error("Error al guardar el usuario: ", error);
+      alert(`Error al guardar el usuario: ${error.message || 'Error desconocido'}`);
+    }
+  };
 
   return (
-    <form className="newuser-card">
-      <h2>Información de usuario</h2>
+    <form className="newuser-card" onSubmit={handleSubmit}>
+      <h2>{selectedUser ? 'Editar Usuario' : 'Crear Nuevo Usuario'}</h2>
       <div className="adduser-datos">
         <div className="adduser-nombre">
           <input 
             type="text" 
             placeholder='Nombre...' 
             value={addNombre}
-            readOnly={!selectedUser} // Hacer editable solo si no hay un usuario seleccionado
+            onChange={(e) => setAddNombre(e.target.value)} 
           />
         </div>
         <div className="adduser-apellido">
@@ -65,7 +106,7 @@ const AddUser = ({ selectedUser }) => {
             type="text" 
             placeholder='Apellido...' 
             value={addApellido}
-            readOnly={!selectedUser} // Hacer editable solo si no hay un usuario seleccionado
+            onChange={(e) => setAddApellido(e.target.value)} 
           />
         </div>
       </div>
@@ -77,7 +118,7 @@ const AddUser = ({ selectedUser }) => {
               type="button"
               className={`adduser-roleicon ${isSelected('zonaA') ? 'selected' : ''}`}
               id='zonaA'
-              disabled={!selectedUser}
+              onClick={() => handleRoleToggle('zonaA')}
             >
               A
             </button>
@@ -88,7 +129,7 @@ const AddUser = ({ selectedUser }) => {
               type="button"
               id='zonaBC'
               className={`adduser-roleicon ${isSelected('zonaBC') ? 'selected' : ''}`}
-              disabled={!selectedUser}
+              onClick={() => handleRoleToggle('zonaBC')}
             >
               BC
             </button>
@@ -99,7 +140,7 @@ const AddUser = ({ selectedUser }) => {
               type="button"
               id='empaquetado'
               className={`adduser-roleicon ${isSelected('empaquetado') ? 'selected' : ''}`}
-              disabled={!selectedUser}
+              onClick={() => handleRoleToggle('empaquetado')}
             >
               <GoPackageDependencies />
             </button>
@@ -110,7 +151,7 @@ const AddUser = ({ selectedUser }) => {
               type="button"
               id='jefeAlmacen'
               className={`adduser-roleicon ${isSelected('jefeAlmacen') ? 'selected' : ''}`}
-              disabled={!selectedUser}
+              onClick={() => handleRoleToggle('jefeAlmacen')}
             >
               <IonIcon icon={cubeOutline} />
             </button>
@@ -123,7 +164,7 @@ const AddUser = ({ selectedUser }) => {
               type="button"
               id='credito'
               className={`adduser-roleicon ${isSelected('credito') ? 'selected' : ''}`}
-              disabled={!selectedUser}
+              onClick={() => handleRoleToggle('credito')}
             >
               <IonIcon icon={walletOutline} />
             </button>
@@ -134,7 +175,7 @@ const AddUser = ({ selectedUser }) => {
               type="button"
               id='clientes'
               className={`adduser-roleicon ${isSelected('clientes') ? 'selected' : ''}`}
-              disabled={!selectedUser}
+              onClick={() => handleRoleToggle('clientes')}
             >
               <IonIcon icon={chatbubbleOutline} />
             </button>
@@ -145,7 +186,7 @@ const AddUser = ({ selectedUser }) => {
               type="button"
               id='jefeAtencionClientes'
               className={`adduser-roleicon ${isSelected('jefeAtencionClientes') ? 'selected' : ''}`}
-              disabled={!selectedUser}
+              onClick={() => handleRoleToggle('jefeAtencionClientes')}
             >
               <RiCustomerService2Line />
             </button>
@@ -155,8 +196,8 @@ const AddUser = ({ selectedUser }) => {
             <button
               type="button"
               id='admin'
-              className={`adduser-roleicon ${isSelected('Admin') ? 'selected' : ''}`}
-              disabled={!selectedUser}
+              className={`adduser-roleicon ${isSelected('admin') ? 'selected' : ''}`}
+              onClick={() => handleRoleToggle('Admin')}
             >
               <LiaUserShieldSolid />
             </button>
@@ -169,9 +210,16 @@ const AddUser = ({ selectedUser }) => {
           type="text" 
           placeholder='Contraseña...' 
           value={addContra}
-          readOnly={!selectedUser} // Hacer editable solo si no hay un usuario seleccionado
+          onChange={(e) => setAddContra(e.target.value)} 
         />
       </div>
+      <button 
+        type="submit" 
+        className="adduser-submit"
+        disabled={!isFormValid} // Deshabilitar el botón si el formulario no es válido
+      >
+        {selectedUser ? 'Guardar Cambios' : 'Crear Usuario'}
+      </button>
     </form>
   );
 };
