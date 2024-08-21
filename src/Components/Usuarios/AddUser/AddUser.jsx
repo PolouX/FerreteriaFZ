@@ -32,13 +32,31 @@ const AddUser = ({ selectedUser, setSelectedUser }) => {
 
   const handleRoleToggle = (role) => {
     setSelectedRoles((prevRoles) => {
-      if (prevRoles.includes(role)) {
-        return prevRoles.filter(r => r !== role);
+      const combinableRoles = ['zonaA', 'zonaBC', 'empaquetado'];
+      const nonCombinableRoles = ['admin', 'credito'];
+  
+      if (combinableRoles.includes(role)) {
+        // Si hay un rol no combinable seleccionado, deseleccionarlo primero antes de seleccionar un rol combinable
+        if (prevRoles.some(r => nonCombinableRoles.includes(r))) {
+          return [role]; // Deselecciona el rol no combinable y selecciona solo el rol combinable
+        } else {
+          // Alternar la selección del rol combinable
+          if (prevRoles.includes(role)) {
+            return prevRoles.filter(r => r !== role);
+          } else {
+            return [...prevRoles, role];
+          }
+        }
+      } else if (nonCombinableRoles.includes(role)) {
+        // Si se selecciona un rol no combinable, deseleccionar todos los roles actuales y seleccionar solo este
+        return [role];
       } else {
-        return [...prevRoles, role];
+        // Lógica para otros roles no combinables o únicos
+        return [role];
       }
     });
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
