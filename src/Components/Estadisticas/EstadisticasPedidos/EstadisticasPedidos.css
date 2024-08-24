@@ -1,0 +1,53 @@
+.estadisticas-pedidos {
+    width: 520px;
+    text-align: left;
+    display: flex;
+    margin-top: 20px;
+}
+
+.estadisticas-pedidos table{
+    border-spacing: 0px 15px;
+    width: 100%;
+    overflow: hidden; 
+}
+
+.estadisticas-pedidos thead th{
+    border: 1px solid rgb(182, 182, 182);
+    border-right: 0px;
+    border-left: 0px;
+    background-color: #f2f2f2;
+    padding: 15px 25px;
+    font-weight: 600;
+}
+
+
+.estadisticas-pedidos tbody td {
+    border: 1px solid rgb(182, 182, 182);
+    border-right: 0px;
+    border-left: 0px;
+
+    padding: 15px 25px;
+
+}
+
+.estadisticas-pedidos thead th:first-child {
+    border-radius: 15px 0px 0px 15px;
+    border-left: 1px solid rgb(182, 182, 182);
+}
+
+.estadisticas-pedidos thead th:last-child {
+    border-radius: 0px 15px 15px 0px;
+    border-right: 1px solid rgb(182, 182, 182);
+    text-align: center;
+}
+
+.estadisticas-pedidos tbody tr td:first-child {
+    border-radius: 15px 0px 0px 15px;
+    border-left: 1px solid rgb(182, 182, 182);
+}
+
+.estadisticas-pedidos tbody tr td:last-child {
+    border-radius: 0px 15px 15px 0px;
+    border-right: 1px solid rgb(182, 182, 182);
+    text-align: center;
+}

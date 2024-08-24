@@ -6,7 +6,7 @@ import Pedidos from '../../Components/Pedidos/Pedidos';
 import Credito from '../../Components/Credito/Credito';
 import UserLayout from '../../Components/Usuarios/UserLayout/UserLayout';
 import Inventario from '../../Components/Inventraio/Inventario';
-import Estadisticas from '../../Components/Estadisticas/Estadisticas';
+import EstadisticasLayout from '../../Components/Estadisticas/EstadisticasLayout/EstadisticasLayout';
 import { Routes, Route } from 'react-router-dom';
 import "./Admin.css"
 
@@ -20,7 +20,7 @@ const Admin = () => {
         <Routes>
           <Route path="usuarios" element={<UserLayout />} />
           <Route path="pedidos" element={<Pedidos />} />
-          <Route path="estadisticas" element={<Estadisticas />} />
+          <Route path="estadisticas" element={<EstadisticasLayout />} />
           <Route path="clientes" element={<ClientesLayout />} />
           <Route path="inventario" element={<Inventario />} />
           <Route path="credito" element={<Credito />} />

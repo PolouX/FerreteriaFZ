@@ -1,0 +1,10 @@
+.estadisticas-resumen {
+    width: calc(100% - 620px);
+    border-left: 1px solid rgba(0, 0, 0, 0.3);
+    position: absolute;
+    padding: 50px;
+    padding-top: 115px;
+    height: 100%;
+    top: 0px;
+    right: 0px;
+}
