@@ -1,0 +1,262 @@
+.clientes-header {
+       display: flex; 
+       justify-content: space-between;
+       margin-top: 30px;
+
+}
+
+.clientes-left-filters button{
+    height: 40px;
+    padding-bottom: 6px;
+    padding: 5px 10px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.7);
+    font-weight: 500;
+    border-bottom: 2px solid rgb(186, 186, 186);
+    transition: all 0.3s;
+}
+
+.clientes-left-filters button:hover {
+    color: black;
+    border-bottom: 2px solid rgb(55, 55, 55);
+    transition: all 0.7s;
+}
+
+.clientes-search {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+}
+
+.clientes-search input {
+    height: 40px;
+    width: 200px;
+    padding: 0px 15px 0px 35px;
+    border-radius: 9px;
+    outline: none;
+    border: 2px solid rgb(147, 147, 147);
+    background-color: transparent;
+}
+
+.clientes-search-icon {
+    position: relative;
+    left: 30px;
+    top: 0px;
+    color: rgb(88, 88, 88);
+}
+
+.clientes-right-filters {
+    position: relative;
+    display: flex;
+}
+
+.clientes-right-filters button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 120px;
+    padding: 0px 10px;
+    background: linear-gradient(to right, #FF4B4B, #D92332);
+    box-shadow: rgba(217, 35, 50, 0.3) 0 -25px 18px -14px inset,
+                  rgba(217, 35, 50, 0.25) 0 1px 2px, 
+                  rgba(217, 35, 50, 0.25) 0 2px 4px, 
+                  rgba(217, 35, 50, 0.25) 0 4px 8px, 
+                  rgba(217, 35, 50, 0.25) 0 8px 16px, 
+                  rgba(217, 35, 50, 0.25) 0 16px 32px;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.clientes-form {
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 6px 6px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    border-radius: 10px;
+    width: 300px;
+    height: 400px;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    padding: 25px;
+    transition: height 0.5s ease-out, opacity 0.5s ease-out;
+}
+
+.clientes-form .visible {
+    transition: height 0.5s ease-out, opacity 0.5s ease-out;
+    height: 500px; /* Ajusta este valor según la altura de tu formulario */
+    opacity: 1;
+  }
+
+.clientes-form .subir-archivo {
+    width: 100%;
+    height: 150px;
+    background: white;
+    border: 1px dashed rgb(99, 99, 99);
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin-top: 20px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.clientes-subir-icon {
+    font-size: 50px;
+    color: rgb(62, 62, 62);
+    margin-bottom: 10px;
+}
+
+.clientes-form .subir-archivo p {
+    font-size: 13px;
+}
+
+.clientes-form .subir-archivo:hover {
+   background: rgb(245, 249, 255);
+   border-color: rgb(98, 98, 216);
+}
+
+
+.clientes-form .subir-archivo:hover .clientes-subir-icon{
+   color: rgb(59, 59, 202);
+ }
+
+.clientes-form .subir-archivo.dragging {
+   background: rgb(245, 249, 255); /* El mismo fondo que en hover */
+   border-color: rgb(98, 98, 216); /* El mismo borde que en hover */
+}
+
+.clientes-form .subir-archivo.dragging .clientes-subir-icon{
+    color: rgb(59, 59, 202);
+  }
+
+.clientes-checkbox {
+    background-color: rgb(237, 237, 237);
+    position: relative;
+    top: 5px;
+    width: 250px;
+    padding: 10px 30px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.clientes-opciones {
+    display: flex;
+}
+
+.clientes-opciones p {
+    margin-left: 5px;
+}
+
+.clientes-form-header {
+    display: flex;
+    align-items: center;
+}
+
+#clientes-header-icon {
+    font-size: 22px;
+    margin-right: 5px;
+}
+
+.clientes-form .clientes-close-form {
+    background: none;
+    color: black;
+    box-shadow: none;
+    width: 30px;
+    height: 30px;
+    font-size: 25px;
+    padding: 0px;
+    border-radius: 12px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.clientes-form .clientes-close-form:hover {
+    background-color: rgb(230, 230, 230);
+}
+
+.archivo-subido .clientes-borrar-archivo {
+    background: none;
+    color: black;
+    box-shadow: none;
+    height: 30px;
+    width: 30px;
+    padding: 0px;
+    font-size: 17px;
+    margin-left: 20px;
+    position: relative;
+   
+}
+
+.archivo-subido .clientes-borrar-archivo:hover {
+    color: red;
+}
+
+.archivo-subido {
+    justify-content: center;
+}
+
+.archivo-subido:first-child {
+    font-size: 50px;
+    color: rgb(62, 62, 62);
+}
+
+.archivo-info {
+    background-color: rgb(237, 237, 237);
+    width: auto;
+
+    border-radius: 10px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 5px 5px 15px;
+    align-items: center;
+}
+
+.clientes-form .subir-archivo {
+    /* Otros estilos */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .clientes-form .subir-archivo:hover {
+    background: rgb(245, 249, 255);
+    border-color: rgb(98, 98, 216);
+  }
+  
+  .clientes-form .subir-archivo.file-present:hover {
+    background: white; /* Mantén el fondo original */
+    border-color: rgb(99, 99, 99); /* Mantén el borde original */
+    cursor: default; /* Cambiar el cursor para indicar que no es clicable */
+  }
+  
+  .clientes-form .subir-archivo.file-present:hover .clientes-subir-icon {
+    color: rgb(62, 62, 62); /* Mantén el color original del icono */
+  }
+  
+  .clientes-form .clientes-enviar-form {
+    width: 100%;
+    position: relative;
+    top: 25px;
+  }
+
+  .clientes-salida-text {
+    font-weight: 505;
+  }
+  
+  .clientes-checkbox .clientes-opciones input {
+    cursor: pointer;
+  }

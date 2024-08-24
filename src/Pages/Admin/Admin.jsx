@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from '../../Components/Header/Header';
 import AdminSidebar from '../../Components/AdminSidebar/AdminSidebar';
-import Clientes from '../../Components/Clientes/Clientes';
+import ClientesLayout from '../../Components/Clientes/ClientesLayout/ClientesLayout';
 import Pedidos from '../../Components/Pedidos/Pedidos';
 import Credito from '../../Components/Credito/Credito';
 import UserLayout from '../../Components/Usuarios/UserLayout/UserLayout';
@@ -21,7 +21,7 @@ const Admin = () => {
           <Route path="usuarios" element={<UserLayout />} />
           <Route path="pedidos" element={<Pedidos />} />
           <Route path="estadisticas" element={<Estadisticas />} />
-          <Route path="clientes" element={<Clientes />} />
+          <Route path="clientes" element={<ClientesLayout />} />
           <Route path="inventario" element={<Inventario />} />
           <Route path="credito" element={<Credito />} />
         </Routes>
