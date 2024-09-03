@@ -36,7 +36,18 @@ const Login = () => {
         setError("");
         setIsAuthenticated(true);
         setUser(userData);  // Almacena la información del usuario en el contexto
-        navigate("/admin/usuarios");
+
+        // Redirigir basado en el rol del usuario
+        if (userData.permisos.includes('Admin')) {
+          navigate("/admin/usuarios");
+        } else if (userData.permisos.includes('credito')) {
+          navigate("/credito");
+        } else if (userData.permisos.includes('clientes')) {
+          navigate("/clientes");
+        } else {
+          // Manejar otros casos o redirigir a una página de error
+          navigate("/login");
+        }
       }
     } catch (err) {
       console.log('Error buscando el usuario');
@@ -86,3 +97,4 @@ const Login = () => {
 }
 
 export default Login;
+

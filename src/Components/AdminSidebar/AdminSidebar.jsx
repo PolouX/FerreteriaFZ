@@ -5,7 +5,6 @@ import {IonIcon} from "@ionic/react";
 import { cubeOutline, pieChartOutline, peopleOutline, layersOutline, walletOutline, chatbubblesOutline, notificationsOutline } from 'ionicons/icons';
 import { RiCustomerService2Line } from "react-icons/ri";
 
-
 const Sidebar = () => {
   const location = useLocation();
   const [selected, setSelected] = useState(location.pathname);
