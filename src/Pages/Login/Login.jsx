@@ -8,7 +8,7 @@ import AuthContext from '../../AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setIsAuthenticated, setUser } = useContext(AuthContext);  // Añadir setUser al contexto
+  const { setIsAuthenticated, setUser } = useContext(AuthContext); 
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState("");
 
@@ -32,11 +32,22 @@ const Login = () => {
         setError("¡Contraseña incorrecta!");
       } else {
         const doc = querySnapshot.docs[0];
-        const userData = doc.data();  // Obtén la información del usuario
+        const userData = doc.data();
         setError("");
         setIsAuthenticated(true);
-        setUser(userData);  // Almacena la información del usuario en el contexto
-        navigate("/admin/usuarios");
+        setUser(userData); 
+
+     
+        if (userData.permisos.includes('Admin')) {
+          navigate("/admin/usuarios");
+        } else if (userData.permisos.includes('credito')) {
+          navigate("/credito");
+        } else if (userData.permisos.includes('clientes')) {
+          navigate("/clientes");
+        } else {
+          // Manejar otros casos o redirigir a una página de error
+          navigate("/login");
+        }
       }
     } catch (err) {
       console.log('Error buscando el usuario');
@@ -86,3 +97,4 @@ const Login = () => {
 }
 
 export default Login;
+

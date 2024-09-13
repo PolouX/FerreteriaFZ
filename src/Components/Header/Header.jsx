@@ -18,6 +18,8 @@ function Header() {
     const location = useLocation();
 
     let header_content;
+
+    // Manejo de las rutas para /credito y /admin/credito
     switch (location.pathname) {
       case '/admin/pedidos':
         header_content = { titulo: "Pedidos", mensaje: "Consulta la lista de pedidos activos en almacén." };
@@ -35,6 +37,7 @@ function Header() {
         header_content = { titulo: "Inventario", mensaje: "Agrega o modifica los productos en el inventario." };
         break;
       case '/admin/credito':
+      case '/credito':
         header_content = { titulo: "Crédito", mensaje: "Solicitudes de pedidos pendientes de autorizar." };
         break;
       default:
