@@ -6,10 +6,12 @@ const EstadisticasPedidos = () => {
     <div className="estadisticas-pedidos">
         <table>
             <thead>
-                <th>Pedido</th>
-                <th>Clave</th>
-                <th>Cliente</th>
-                <th>%</th>
+                <tr>
+                    <th>Pedido</th>
+                    <th>Clave</th>
+                    <th>Cliente</th>
+                    <th>%</th>
+                </tr>
             </thead>
             <tbody>
                 <tr>

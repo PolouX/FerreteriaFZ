@@ -1,8 +1,10 @@
 .estadisticas-pedidos {
-    width: 520px;
+    width: 45%;
     text-align: left;
     display: flex;
     margin-top: 20px;
+    padding-right: 55px;
+
 }
 
 .estadisticas-pedidos table{

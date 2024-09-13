@@ -1,5 +1,5 @@
 .estadisticas-resumen {
-    width: calc(100% - 620px);
+    width: 55%;
     border-left: 1px solid rgba(0, 0, 0, 0.3);
     position: absolute;
     padding: 50px;
@@ -7,4 +7,74 @@
     height: 100%;
     top: 0px;
     right: 0px;
+}
+
+.estadisticas-resumen-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.estadisticas-header-botones {
+    display: flex;
+    gap: 10px;
+}
+
+.estadisticas-header-botones button {
+    display: flex;
+    height: 40px;
+    width: 40px;
+    font-size: 20px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    border: 1px solid rgb(51, 51, 51);
+    background: white;
+    color: rgb(51, 51, 51);
+    cursor: pointer;
+}
+
+.estadisticas-header-botones input {
+    width: 150px;
+    border-radius: 13px;
+    border: 1px solid rgb(51, 51, 51);
+    padding: 0px 15px;
+    color: rgb(51, 51, 51);
+}
+
+.bar-stats {
+    display: flex;
+    gap: 40px; /* Espacio entre barras */
+    width: 100%; /* El contenedor ocupa el 80% del ancho de la pantalla */
+    margin: 0 auto; /* Centra el contenedor en la página */
+    align-items: end;
+    justify-content: center;
+    padding: 50px 40px;
+    height: 250px;
+    border-radius: 20px;
+    margin-top: 40px;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(0, 0, 0, 0.049);
+}
+
+.bar {
+    background-color: #b6b6b6;
+    width: 30px; /* Ancho de cada barra */
+    border-radius: 4px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.bar p {
+    transform: rotateY('180');
+    font-weight: 550;
+    color: rgb(146, 146, 146);
+    display: flex;
+    justify-content: center;
+    font-size: 11px;
+    position: absolute;
+    width: 50px;
+    bottom: -25px;
 }
