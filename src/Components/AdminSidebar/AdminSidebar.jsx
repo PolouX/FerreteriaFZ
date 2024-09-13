@@ -1,8 +1,8 @@
 import React, { useState } from 'react'; 
 import { Link, useLocation } from 'react-router-dom';
 import './AdminSidebar.css';
-import {IonIcon} from "@ionic/react";
-import { cubeOutline, pieChartOutline, peopleOutline, layersOutline, walletOutline, chatbubblesOutline, notificationsOutline } from 'ionicons/icons';
+import { IonIcon } from "@ionic/react";
+import { cubeOutline, pieChartOutline, peopleOutline, walletOutline, chatbubblesOutline, notificationsOutline } from 'ionicons/icons';
 import { RiCustomerService2Line } from "react-icons/ri";
 
 const Sidebar = () => {
@@ -40,12 +40,7 @@ const Sidebar = () => {
         >
             <IonIcon icon={chatbubblesOutline} className={`sidebar_icon ${selected === "/admin/clientes" ? "sidebar_seleccionado" : ""}`} />
         </Link>
-        <Link 
-          to="/admin/inventario"
-          onClick={() => handleClick("/admin/inventario")}
-        >
-            <IonIcon icon={layersOutline} className={`sidebar_icon ${selected === "/admin/inventario" ? "sidebar_seleccionado" : ""}`} />
-        </Link>
+        {/* Inventario ha sido removido */}
         <Link 
           to="/admin/credito"
           onClick={() => handleClick("/admin/credito")}
