@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { IonIcon } from "@ionic/react";
 import { searchOutline, closeOutline } from 'ionicons/icons';
 import { TbFileUpload } from "react-icons/tb";
-import { MdOutlineDeleteOutline } from "react-icons/md";
 import { TbPackageImport } from "react-icons/tb";
 import { LuFileBox } from "react-icons/lu";
 import * as XLSX from 'xlsx'; // Importar XLSX para manejar Excel
@@ -17,8 +16,12 @@ const ClientesHeader = () => {
   const [salida, setSalida] = useState(""); // Estado para el tipo de salida
   const [pedidoNumero, setPedidoNumero] = useState(""); // Estado para almacenar el número de pedido
   const [numeroCliente, setNumeroCliente] = useState(""); // Estado para almacenar el número de cliente
+  const [nombreCliente, setNombreCliente] = useState(""); // Estado para almacenar el nombre del cliente
   const [productos, setProductos] = useState([]); // Estado para almacenar los productos procesados
-
+  const [zona, setZona] = useState("");
+  const [subZona, setSubZona] = useState("");
+  const [clientesFilters, setClientesFilters] = useState("Activos");
+  
   const handleFileClick = () => {
     document.getElementById('file-input').click();
   };
@@ -29,6 +32,14 @@ const ClientesHeader = () => {
       setFile(selectedFile);
       processFile(selectedFile);
     }
+  };
+
+  const capitalizeWords = (str) => {
+    return str
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   };
 
   const processFile = (file) => {
@@ -51,6 +62,7 @@ const ClientesHeader = () => {
       const headers = jsonData[0];
       const indexPedido = headers.indexOf('no_ped');
       const indexCliente = headers.indexOf('agcrcte');
+      const indexNombreCliente = headers.indexOf('nom_cte'); // Índice para la columna de nombre del cliente
       const indexNumeroProducto = headers.indexOf('cve_prod');
       const indexCantidadProducto = headers.indexOf('cant_prod');
       const indexPrecioProducto = headers.indexOf('valor_prod');
@@ -59,9 +71,11 @@ const ClientesHeader = () => {
       const indexDescuento2 = headers.indexOf('dcto2');
       const indexDescripcionProducto = headers.indexOf('desc_prod');
       const indexLugarAlmacenamiento = headers.indexOf('local');
+      const indexZona = headers.indexOf('nom_zon');
+      const indexSubZona = headers.indexOf('nom_sub');
 
       // Validar si los índices son válidos
-      if (indexPedido === -1 || indexCliente === -1 || indexNumeroProducto === -1 || indexCantidadProducto === -1 || indexPrecioProducto === -1 || indexIvaProducto === -1 || indexDescuento1 === -1 || indexDescuento2 === -1 || indexDescripcionProducto === -1 || indexLugarAlmacenamiento === -1) {
+      if (indexPedido === -1 || indexCliente === -1 || indexNombreCliente === -1 || indexNumeroProducto === -1 || indexCantidadProducto === -1 || indexPrecioProducto === -1 || indexIvaProducto === -1 || indexDescuento1 === -1 || indexDescuento2 === -1 || indexDescripcionProducto === -1 || indexLugarAlmacenamiento === -1 || indexZona === -1 || indexSubZona === -1) {
         console.error('No se encontraron todas las columnas necesarias en el archivo Excel.');
         return;
       }
@@ -69,6 +83,11 @@ const ClientesHeader = () => {
       // Extraer los datos generales del pedido y guardarlos en el estado
       setPedidoNumero(String(jsonData[1][indexPedido])); // Asegurar que sea una cadena de texto
       setNumeroCliente(String(jsonData[1][indexCliente])); // Asegurar que sea una cadena de texto
+      setZona(String(jsonData[1][indexZona]));
+      setSubZona(String(jsonData[1][indexSubZona]));
+      const formattedNombreCliente = capitalizeWords(String(jsonData[1][indexNombreCliente]));
+
+      setNombreCliente(formattedNombreCliente);
 
       // Procesar productos y guardarlos en el estado
       const productosProcesados = jsonData.slice(1).map(row => ({
@@ -79,12 +98,12 @@ const ClientesHeader = () => {
         descuento1: row[indexDescuento1], // Descuento 1
         descuento2: row[indexDescuento2], // Descuento 2
         descripcionProducto: row[indexDescripcionProducto], // Descripción de producto
-        lugarAlmacenamiento: row[indexLugarAlmacenamiento], // Lugar de almacenamiento
+        lugarAlmacenamiento: row[indexLugarAlmacenamiento] || '', // Lugar de almacenamiento
       }));
 
       setProductos(productosProcesados);
 
-      console.log('Datos procesados:', { pedidoNumero: jsonData[1][indexPedido], numeroCliente: jsonData[1][indexCliente], productos: productosProcesados });
+      console.log('Datos procesados:', { pedidoNumero: jsonData[1][indexPedido], numeroCliente: jsonData[1][indexCliente], nombreCliente: jsonData[1][indexNombreCliente], productos: productosProcesados });
     };
     reader.readAsArrayBuffer(file);
   };
@@ -102,6 +121,16 @@ const ClientesHeader = () => {
     }
 
     try {
+      // Determinar el valor de 'estado' basado en los productos
+      let estado = 'Zona BC'; // Valor por defecto
+
+      // Verificar si algún producto tiene lugarAlmacenamiento que comience con "A"
+      const hasZonaA = productos.some(producto => producto.lugarAlmacenamiento && producto.lugarAlmacenamiento.startsWith('A'));
+      
+      if (hasZonaA) {
+        estado = 'Zona A'; // Si alguno empieza con "A", cambiar a "Zona A"
+      }
+
       // Usar el número de pedido como ID para el documento
       const pedidoRef = doc(db, 'pedidos', pedidoNumero);
 
@@ -109,11 +138,13 @@ const ClientesHeader = () => {
       await setDoc(pedidoRef, {
         numeroPedido: pedidoNumero,
         numeroCliente: numeroCliente,
+        nombreCliente: nombreCliente, // Guardar el nombre del cliente extraído del Excel
         salida: salida, // Guardar el tipo de salida seleccionado
         activo: true,   // Iniciar como activo
         backorder: false, // Iniciar como no backorder
-        nombreCliente: "", // Nombre de cliente vacío
-        estado: "" // Estado vacío de momento
+        estado: estado,  // Estado determinado
+        zona: zona,
+        subZona: subZona
       });
 
       // Agregar productos a la subcolección 'productos' dentro del documento de pedido
@@ -136,6 +167,9 @@ const ClientesHeader = () => {
     setFile(null);
     setPedidoNumero("");
     setNumeroCliente("");
+    setZona("");
+    setSubZona("");
+    setNombreCliente(""); // Reiniciar nombreCliente
     setProductos([]);
     setSalida("");
     setIsFormVisible(false);
@@ -184,12 +218,15 @@ const ClientesHeader = () => {
     saveOrderToFirebase();
   };
 
+
   return (
     <>
       <div className="clientes-header">
         <div className="clientes-left-filters">
-          <button>Activos</button>
-          <button>Facturas</button>
+          <button className={clientesFilters === "Activos" ? "clientesFilterSelected " : ""} onClick={() => setClientesFilters("Activos")}>
+            Activos
+          </button>
+          <button className={clientesFilters === "Facturas" ? "clientesFilterSelected " : ""} onClick={() => setClientesFilters("Facturas")}>Facturas</button>
         </div>
 
         <div className="clientes-right-filters">
