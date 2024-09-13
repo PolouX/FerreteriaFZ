@@ -5,7 +5,6 @@ import Header from '../Header/Header';
 const Credito = () => {
   return (
     <div className="credito-layout">
-      <Header />
       <div className="credito-content">
         <h2>Prueba</h2>
         <p>Este es un mensaje centrado sin header.</p>
