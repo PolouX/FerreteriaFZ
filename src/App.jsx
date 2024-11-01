@@ -6,6 +6,7 @@ import PrivateRoute from './PrivateRoute';
 import Login from './Pages/Login/Login';
 import Admin from './Pages/Admin/Admin';
 import Credito from './Components/Credito/Credito';
+import Clientes from './Pages/ClientesPage/ClientesPage';
 
 const App = () => {
   return (
@@ -15,8 +16,8 @@ const App = () => {
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin/*" element={<PrivateRoute requiredRoles={['Admin']}><Admin /></PrivateRoute>} />
-          {/* Mostrar Header en la vista de /credito */}
           <Route path="/credito" element={<PrivateRoute requiredRoles={['credito']}><Credito showHeader={true} /></PrivateRoute>} />
+          <Route path="/clientes" element={<PrivateRoute requiredRoles={['clientes']}><Clientes/></PrivateRoute>} />
         </Routes>
       </Router>
     </AuthProvider>
