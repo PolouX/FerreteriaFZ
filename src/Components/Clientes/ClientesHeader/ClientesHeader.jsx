@@ -142,9 +142,10 @@ const ClientesHeader = () => {
         salida: salida, // Guardar el tipo de salida seleccionado
         activo: true,   // Iniciar como activo
         backorder: false, // Iniciar como no backorder
+        prioridad: false,
         estado: estado,  // Estado determinado
         zona: zona,
-        subZona: subZona
+        subZona: subZona,
       });
 
       // Agregar productos a la subcolección 'productos' dentro del documento de pedido

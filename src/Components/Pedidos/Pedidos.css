@@ -1,0 +1,87 @@
+.pedidos {
+    text-align: left;
+    display: flex;
+    margin-top: 30px;
+    width: 100%; /* Asegura que la tabla ocupe todo el ancho del contenedor */
+}
+
+.pedidos table {
+    border-collapse: separate; /* Cambiar a separate */
+    border-spacing: 0; /* Elimina los espacios entre celdas */
+    width: 100%;
+    overflow: hidden; /* Asegura que el contenido no sobresalga */
+}
+
+.pedidos thead th {
+    border: 1px solid rgb(125, 125, 125);
+    border-bottom: 0px;
+    border-right: 0px;
+    padding: 10px 18px;
+    font-weight: 600;
+    background-color: #f2f2f2; /* Color de fondo opcional para encabezados */
+}
+
+.pedidos tbody td {
+    border: 1px solid rgb(125, 125, 125);
+    border-bottom: 0px;
+    border-right: 0px;
+    padding: 10px 18px;
+}
+
+/* Aplica el border-radius a las esquinas de la tabla */
+.pedidos table thead th:first-child {
+    border-top-left-radius: 8px;
+}
+
+.pedidos table thead th:last-child {
+    border-top-right-radius: 8px;
+    border-right: 1px solid rgb(125, 125, 125);
+}
+
+.pedidos table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 8px;
+}
+
+.pedidos table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 8px;
+}
+
+.pedidos table tbody tr:last-child td {
+    border-bottom: 1px solid rgb(125, 125, 125);
+}
+
+.pedidos table tbody td:last-child {
+    border-right: 1px solid rgb(125, 125, 125);
+}
+
+/* Estilo para la celda */
+#pedidos-prioridad {
+    text-align: center; /* Centra el contenido horizontalmente */
+    vertical-align: middle; /* Centra el contenido verticalmente */
+    width: 120px; /* Ancho de la celda */
+
+  }
+  
+  /* Estilo para el botón */
+  #pedidos-prioridad button {
+    display: inline-flex; /* Usa flexbox para centrar el ícono */
+    align-items: center; /* Centra el contenido verticalmente */
+    justify-content: center; /* Centra el contenido horizontalmente */
+    background-color: transparent; /* Fondo transparente */
+    border: 2px solid rgb(83, 83, 83); /* Sin borde */
+    cursor: pointer; /* Cursor de puntero */
+    font-size: 15px; /* Tamaño del ícono */
+    padding: 0; /* Elimina el padding */
+    margin: 0; /* Elimina el margen */
+    width: 25px; /* Ancho del botón */
+    height: 25px; /* Altura del botón */
+    border-radius: 100px;
+  }
+
+  #pedidos-prioridad button:hover {
+    background: linear-gradient(to right, #FF4B4B, #D92332);
+    box-shadow: 0px 0px 15px #FF4B4B;
+    border: none;
+    color: white;
+  }
+
