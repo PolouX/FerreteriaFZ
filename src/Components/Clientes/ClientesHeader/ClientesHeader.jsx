@@ -6,7 +6,7 @@ import { TbPackageImport } from "react-icons/tb";
 import { LuFileBox } from "react-icons/lu";
 import * as XLSX from 'xlsx'; // Importar XLSX para manejar Excel
 import { db } from '../../../firebaseConfig'; // Asegúrate de importar tu configuración de Firebase
-import { collection, doc, setDoc, addDoc } from 'firebase/firestore'; // Importar addDoc
+import { collection, doc, setDoc, addDoc, serverTimestamp } from 'firebase/firestore';
 import "./ClientesHeader.css";
 
 const ClientesHeader = () => {
@@ -146,6 +146,7 @@ const ClientesHeader = () => {
         estado: estado,  // Estado determinado
         zona: zona,
         subZona: subZona,
+        timestamp: serverTimestamp(),
       });
 
       // Agregar productos a la subcolección 'productos' dentro del documento de pedido

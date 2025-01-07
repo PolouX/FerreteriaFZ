@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../../firebaseConfig'; // Asegúrate de importar tu configuración de Firebase
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot, updateDoc, doc } from 'firebase/firestore';
 import { IonIcon } from "@ionic/react";
 import { alertOutline } from 'ionicons/icons';
 import "./Pedidos.css";
@@ -15,16 +15,38 @@ const Pedidos = () => {
     // Escuchar los cambios en la colección en tiempo real
     const unsubscribe = onSnapshot(pedidosRef, (snapshot) => {
       const pedidosData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setPedidos(pedidosData);
+      setPedidos(reordenarPedidos(pedidosData));
     });
 
     // Limpiar la suscripción al desmontar el componente
     return () => unsubscribe();
   }, []);
 
+  // Función para reordenar los pedidos
+  const reordenarPedidos = (pedidos) => {
+    return pedidos.sort((a, b) => b.prioridad - a.prioridad); // Prioritarios primero
+  };
+
+  const handlePrioridadClick = async (id) => {
+    try {
+      const pedidoRef = doc(db, 'pedidos', id);
+      const pedidoActual = pedidos.find(pedido => pedido.id === id);
+
+      // Actualiza la prioridad en Firestore
+      await updateDoc(pedidoRef, { prioridad: !pedidoActual.prioridad });
+
+      // Actualiza la lista local de pedidos
+      const pedidosActualizados = pedidos.map(pedido =>
+        pedido.id === id ? { ...pedido, prioridad: !pedido.prioridad } : pedido
+      );
+      setPedidos(reordenarPedidos(pedidosActualizados));
+    } catch (error) {
+      console.error('Error al actualizar la prioridad:', error);
+    }
+  };
+
   return (
     <div className="pedidos">
-
       <table>
         <thead>
           <tr>
@@ -40,9 +62,23 @@ const Pedidos = () => {
             <tr key={pedido.id}>
               <td>{pedido.numeroPedido}</td>
               <td>{pedido.nombreCliente}</td>
-              <td id='pedidos-prioridad'><button><IonIcon icon={alertOutline} /></button></td>
-              <td>{pedido.salida}</td>
-              <td>{pedido.salida}</td>
+              <td id='pedidos-prioridad'>
+                <button
+                  style={{
+                    backgroundColor: pedido.prioridad ? 'red' : 'transparent',
+                    color: pedido.prioridad ? 'white' : 'black',
+                  }}
+                  onClick={() => handlePrioridadClick(pedido.id)}
+                >
+                  <IonIcon icon={alertOutline} />
+                </button>
+              </td>
+              <td>{pedido.salida || 'N/A'}</td>
+              <td>
+                {pedido.timestamp
+                  ? new Date(pedido.timestamp.seconds * 1000).toLocaleString()
+                  : 'Sin registro'}
+              </td>
             </tr>
           ))}
         </tbody>
