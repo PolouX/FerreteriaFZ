@@ -73,11 +73,13 @@ const Pedidos = () => {
                   <IonIcon icon={alertOutline} />
                 </button>
               </td>
-              <td>{pedido.salida || 'N/A'}</td>
               <td>
                 {pedido.timestamp
-                  ? new Date(pedido.timestamp.seconds * 1000).toLocaleString()
+                  ? new Date(pedido.timestamp.seconds * 1000).toLocaleTimeString()
                   : 'Sin registro'}
+              </td>
+              <td>
+                {/* Columna Tiempo queda vacía */}
               </td>
             </tr>
           ))}
