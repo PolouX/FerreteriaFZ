@@ -85,3 +85,66 @@
     color: white;
   }
 
+
+  .pedidos-header {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+
+  .pedidos-header-filters button{
+    height: 40px;
+    padding-bottom: 6px;
+    padding: 5px 10px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.7);
+    font-weight: 500;
+    border-bottom: 2px solid rgb(186, 186, 186);
+    transition: all 0.3s;
+   }
+
+  .pedidos-header-filters button:hover {
+    color: black;
+    border-bottom: 2px solid rgb(55, 55, 55);
+    transition: all 0.7s;
+  }
+
+  .pedidos-header-filters button.pedidos-filter-selected {
+    border-bottom: 2px solid red;
+    color: black;
+    transition: all 0s;
+  }
+
+  .pedidos-header-filters button.pedidos-filter-selected:hover {
+    border-radius: 0px;
+    background-color: transparent;
+  }
+
+
+  .pedidos-search {
+    display: flex;
+    align-items: center;
+  }
+
+  .pedidos-search input {
+    height: 40px;
+    width: 200px;
+    padding: 0px 15px 0px 35px;
+    border-radius: 9px;
+    outline: none;
+    border: 1px solid rgb(147, 147, 147);
+    background-color: transparent;
+  }
+
+  .pedidos-search input:focus{
+    border: 2px solid black;
+  }
+
+  .pedidos-search-icon {
+    position: relative;
+    left: 30px;
+    top: 0px;
+    color: rgb(88, 88, 88);
+  }

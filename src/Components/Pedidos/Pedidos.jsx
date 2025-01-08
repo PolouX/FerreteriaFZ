@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { db } from '../../firebaseConfig'; // Asegúrate de importar tu configuración de Firebase
 import { collection, onSnapshot, updateDoc, doc } from 'firebase/firestore';
 import { IonIcon } from "@ionic/react";
-import { alertOutline } from 'ionicons/icons';
+import { alertOutline, searchOutline } from 'ionicons/icons';
 import "./Pedidos.css";
 
 const Pedidos = () => {
   const [pedidos, setPedidos] = useState([]);
+  const [pedidosFilter, setPedidosFilter] =  useState('Zona A');
 
   useEffect(() => {
     // Referencia a la colección 'pedidos'
@@ -46,18 +47,30 @@ const Pedidos = () => {
   };
 
   return (
-    <div className="pedidos">
-      <table>
-        <thead>
-          <tr>
-            <th>Pedido</th>
-            <th>Nombre</th>
-            <th id='pedidos-prioridad'>Prioridad</th>
-            <th>Llegada</th>
-            <th id='pedidos-time'>Tiempo</th>
-          </tr>
-        </thead>
-        <tbody>
+    <>
+      <div className="pedidos-header">
+        <div className="pedidos-header-filters">
+          <button className={pedidosFilter === "Zona A" ? "pedidos-filter-selected" : ""} onClick={() => setPedidosFilter('Zona A')}>Zona A</button>
+          <button className={pedidosFilter === "Zona BC" ? "pedidos-filter-selected" : ""} onClick={() => setPedidosFilter('Zona BC')}>Zona BC</button>
+          <button className={pedidosFilter === "Empaquetado" ? "pedidos-filter-selected" : ""} onClick={() => setPedidosFilter('Empaquetado')}>Empaquetado</button>
+        </div>
+        <div className="pedidos-search">
+            <IonIcon icon={searchOutline} className='pedidos-search-icon' />
+            <input type="text" placeholder='Buscar un pedido...' />
+        </div>
+      </div>
+      <div className="pedidos">
+        <table>
+          <thead>
+            <tr>
+              <th>Pedido</th>
+              <th>Nombre</th>
+              <th id='pedidos-prioridad'>Prioridad</th>
+              <th>Llegada</th>
+              <th id='pedidos-time'>Tiempo</th>
+            </tr>
+          </thead>
+          <tbody>
           {pedidos.map((pedido) => (
             <tr key={pedido.id}>
               <td>{pedido.numeroPedido}</td>
@@ -81,9 +94,11 @@ const Pedidos = () => {
               </td>
             </tr>
           ))}
-        </tbody>
-      </table>
-    </div>
+          </tbody>
+        </table>
+      </div>
+    </>
+    
   );
 };
 

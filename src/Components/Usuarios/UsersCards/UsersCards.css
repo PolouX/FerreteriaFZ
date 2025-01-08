@@ -25,7 +25,7 @@
 
 .cards-filters button:hover {
     color: black;
-    border-bottom: 2px solid rgb(126, 126, 126);
+    border-bottom: 2px solid rgb(55, 55, 55);
     transition: all 0.7s;
 
 }
