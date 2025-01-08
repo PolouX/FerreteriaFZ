@@ -6,7 +6,7 @@ import { TbPackageImport } from "react-icons/tb";
 import { LuFileBox } from "react-icons/lu";
 import * as XLSX from 'xlsx'; // Importar XLSX para manejar Excel
 import { db } from '../../../firebaseConfig'; // Asegúrate de importar tu configuración de Firebase
-import { collection, doc, setDoc, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, setDoc, addDoc } from 'firebase/firestore'; // Importar addDoc
 import "./ClientesHeader.css";
 
 const ClientesHeader = () => {
@@ -21,7 +21,7 @@ const ClientesHeader = () => {
   const [zona, setZona] = useState("");
   const [subZona, setSubZona] = useState("");
   const [clientesFilters, setClientesFilters] = useState("Activos");
-  
+
   const handleFileClick = () => {
     document.getElementById('file-input').click();
   };
@@ -38,7 +38,7 @@ const ClientesHeader = () => {
     return str
       .toLowerCase()
       .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   };
 
@@ -50,7 +50,12 @@ const ClientesHeader = () => {
 
       // Suponiendo que el primer sheet tiene los datos
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      let jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+      // Limpiar filas vacías
+      jsonData = jsonData.filter((row) =>
+        row.some((cell) => cell !== null && cell !== undefined && cell !== "")
+      );
 
       // Validar si jsonData tiene contenido
       if (jsonData.length === 0) {
@@ -62,7 +67,7 @@ const ClientesHeader = () => {
       const headers = jsonData[0];
       const indexPedido = headers.indexOf('no_ped');
       const indexCliente = headers.indexOf('agcrcte');
-      const indexNombreCliente = headers.indexOf('nom_cte'); // Índice para la columna de nombre del cliente
+      const indexNombreCliente = headers.indexOf('nom_cte');
       const indexNumeroProducto = headers.indexOf('cve_prod');
       const indexCantidadProducto = headers.indexOf('cant_prod');
       const indexPrecioProducto = headers.indexOf('valor_prod');
@@ -75,41 +80,79 @@ const ClientesHeader = () => {
       const indexSubZona = headers.indexOf('nom_sub');
 
       // Validar si los índices son válidos
-      if (indexPedido === -1 || indexCliente === -1 || indexNombreCliente === -1 || indexNumeroProducto === -1 || indexCantidadProducto === -1 || indexPrecioProducto === -1 || indexIvaProducto === -1 || indexDescuento1 === -1 || indexDescuento2 === -1 || indexDescripcionProducto === -1 || indexLugarAlmacenamiento === -1 || indexZona === -1 || indexSubZona === -1) {
+      if (
+        indexPedido === -1 ||
+        indexCliente === -1 ||
+        indexNombreCliente === -1 ||
+        indexNumeroProducto === -1 ||
+        indexCantidadProducto === -1 ||
+        indexPrecioProducto === -1
+      ) {
         console.error('No se encontraron todas las columnas necesarias en el archivo Excel.');
         return;
       }
 
       // Extraer los datos generales del pedido y guardarlos en el estado
-      setPedidoNumero(String(jsonData[1][indexPedido])); // Asegurar que sea una cadena de texto
-      setNumeroCliente(String(jsonData[1][indexCliente])); // Asegurar que sea una cadena de texto
-      setZona(String(jsonData[1][indexZona]));
-      setSubZona(String(jsonData[1][indexSubZona]));
-      const formattedNombreCliente = capitalizeWords(String(jsonData[1][indexNombreCliente]));
+      setPedidoNumero(String(jsonData[1][indexPedido]));
+      setNumeroCliente(String(jsonData[1][indexCliente]));
+      setZona(String(jsonData[1][indexZona] || ""));
+      setSubZona(String(jsonData[1][indexSubZona] || ""));
+      setNombreCliente(
+        capitalizeWords(String(jsonData[1][indexNombreCliente] || ""))
+      );
 
-      setNombreCliente(formattedNombreCliente);
+      // Procesar productos y validarlos
+      const productosProcesados = jsonData.slice(1).map((row, index) => {
+        if (
+          row[indexNumeroProducto] &&
+          row[indexCantidadProducto] &&
+          row[indexPrecioProducto]
+        ) {
+          return {
+            numeroProducto: row[indexNumeroProducto],
+            cantidadProducto: row[indexCantidadProducto],
+            precioProducto: row[indexPrecioProducto],
+            ivaProducto: row[indexIvaProducto] || 0,
+            descuento1: row[indexDescuento1] || 0,
+            descuento2: row[indexDescuento2] || 0,
+            descripcionProducto: row[indexDescripcionProducto] || "",
+            lugarAlmacenamiento: row[indexLugarAlmacenamiento] || "",
+          };
+        } else {
+          console.warn(
+            `Fila inválida detectada en índice ${index + 1}:`,
+            row
+          );
+          return null;
+        }
+      });
 
-      // Procesar productos y guardarlos en el estado
-      const productosProcesados = jsonData.slice(1).map(row => ({
-        numeroProducto: row[indexNumeroProducto], // Número de producto
-        cantidadProducto: row[indexCantidadProducto], // Cantidad de producto
-        precioProducto: row[indexPrecioProducto], // Precio de producto
-        ivaProducto: row[indexIvaProducto], // IVA de producto
-        descuento1: row[indexDescuento1], // Descuento 1
-        descuento2: row[indexDescuento2], // Descuento 2
-        descripcionProducto: row[indexDescripcionProducto], // Descripción de producto
-        lugarAlmacenamiento: row[indexLugarAlmacenamiento] || '', // Lugar de almacenamiento
-      }));
+      // Filtrar productos válidos
+      const productosValidos = productosProcesados.filter(
+        (producto) => producto !== null
+      );
 
-      setProductos(productosProcesados);
+      // Depuración para verificar productos procesados
+     // console.log('=== DEBUG: Productos procesados ===');
+      //productosValidos.forEach((producto, index) => {
+       // console.log(`Producto ${index + 1}:`, producto);
+   //   });
+     // console.log('=== Fin de debug ===');
 
-      console.log('Datos procesados:', { pedidoNumero: jsonData[1][indexPedido], numeroCliente: jsonData[1][indexCliente], nombreCliente: jsonData[1][indexNombreCliente], productos: productosProcesados });
+      // Actualizar el estado
+      setProductos(productosValidos);
+
+      console.log('Datos procesados:', {
+        pedidoNumero: jsonData[1][indexPedido],
+        numeroCliente: jsonData[1][indexCliente],
+        nombreCliente: jsonData[1][indexNombreCliente],
+        productos: productosValidos,
+      });
     };
     reader.readAsArrayBuffer(file);
   };
 
   const saveOrderToFirebase = async () => {
-    // Verificar que pedidoNumero sea una cadena de texto válida
     if (typeof pedidoNumero !== 'string' || pedidoNumero.trim() === '') {
       console.error('Número de pedido no válido:', pedidoNumero);
       return;
@@ -121,43 +164,47 @@ const ClientesHeader = () => {
     }
 
     try {
-      // Determinar el valor de 'estado' basado en los productos
-      let estado = 'Zona BC'; // Valor por defecto
+      let estado = 'Zona BC';
 
-      // Verificar si algún producto tiene lugarAlmacenamiento que comience con "A"
-      const hasZonaA = productos.some(producto => producto.lugarAlmacenamiento && producto.lugarAlmacenamiento.startsWith('A'));
-      
+      const hasZonaA = productos.some(
+        (producto) =>
+          producto.lugarAlmacenamiento &&
+          producto.lugarAlmacenamiento.startsWith('A')
+      );
+
       if (hasZonaA) {
-        estado = 'Zona A'; // Si alguno empieza con "A", cambiar a "Zona A"
+        estado = 'Zona A';
       }
 
-      // Usar el número de pedido como ID para el documento
+      const timestampActual = new Date();
       const pedidoRef = doc(db, 'pedidos', pedidoNumero);
 
-      // Crear un nuevo documento para el pedido en la colección 'pedidos'
       await setDoc(pedidoRef, {
         numeroPedido: pedidoNumero,
         numeroCliente: numeroCliente,
-        nombreCliente: nombreCliente, // Guardar el nombre del cliente extraído del Excel
-        salida: salida, // Guardar el tipo de salida seleccionado
-        activo: true,   // Iniciar como activo
-        backorder: false, // Iniciar como no backorder
+        nombreCliente: nombreCliente,
+        salida: salida,
+        activo: true,
+        backorder: false,
         prioridad: false,
-        estado: estado,  // Estado determinado
+        estado: estado,
         zona: zona,
         subZona: subZona,
-        timestamp: serverTimestamp(),
+        timestamp: timestampActual,
+        historialEstados: [
+          {
+            estado: estado,
+            timestampInicio: timestampActual,
+          },
+        ],
       });
 
-      // Agregar productos a la subcolección 'productos' dentro del documento de pedido
       const productosCollectionRef = collection(pedidoRef, 'productos');
       productos.forEach(async (producto) => {
         await addDoc(productosCollectionRef, producto);
       });
 
       console.log('Pedido guardado con éxito en Firebase.');
-
-      // Reiniciar el formulario
       resetForm();
     } catch (error) {
       console.error('Error al guardar el pedido en Firebase:', error);
@@ -165,31 +212,29 @@ const ClientesHeader = () => {
   };
 
   const resetForm = () => {
-    // Reiniciar todos los estados
     setFile(null);
     setPedidoNumero("");
     setNumeroCliente("");
     setZona("");
     setSubZona("");
-    setNombreCliente(""); // Reiniciar nombreCliente
+    setNombreCliente("");
     setProductos([]);
     setSalida("");
     setIsFormVisible(false);
     setIsDragging(false);
-    document.getElementById('file-input').value = ''; // Reinicia el valor del input
+    document.getElementById('file-input').value = '';
   };
 
   const handleFileRemove = () => {
-    resetForm(); // Usa la función de reinicio de formulario para limpiar todo
+    resetForm();
   };
 
   const handleFormShow = () => {
     setIsFormVisible(!isFormVisible);
   };
 
-  // Manejadores para drag and drop
   const handleDragOver = (event) => {
-    event.preventDefault(); // Evitar que el navegador maneje el archivo
+    event.preventDefault();
     event.stopPropagation();
     setIsDragging(true);
   };
@@ -212,14 +257,13 @@ const ClientesHeader = () => {
   };
 
   const handleSalidaChange = (event) => {
-    setSalida(event.target.value); // Actualizar el tipo de salida seleccionado
+    setSalida(event.target.value);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     saveOrderToFirebase();
   };
-
 
   return (
     <>
@@ -257,7 +301,7 @@ const ClientesHeader = () => {
 
               <div
                 onClick={file ? null : handleFileClick}
-                className={`subir-archivo ${isDragging ? 'dragging' : ''} ${file ? 'file-present' : ''}`} // Añadir clase file-present si hay un archivo
+                className={`subir-archivo ${isDragging ? 'dragging' : ''} ${file ? 'file-present' : ''}`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
