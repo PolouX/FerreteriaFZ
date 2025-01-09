@@ -148,3 +148,53 @@
     top: 0px;
     color: rgb(88, 88, 88);
   }
+
+  .reset-button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-right: 15px;
+  }
+  
+  .reset-button:hover {
+    background-color: darkred;
+    box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.6);
+  }
+
+  /* Efecto para el campo bloqueado */
+.pedidos-search input.search-input-locked {
+    border: 2px solid #6c757d; /* Gris neutro */
+    background-color: #f8f9fa; /* Fondo ligeramente más claro */
+    color: #6c757d; /* Texto gris */
+    cursor: not-allowed; /* Indicador visual de que está bloqueado */
+    transition: box-shadow 0.3s, background-color 0.3s;
+    box-shadow: 0 0 6px rgba(108, 117, 125, 0.5); /* Sombra gris suave */
+  }
+  
+  .pedidos-search input.search-input-locked:focus {
+    border-color: #495057; /* Gris más oscuro al enfocar */
+    box-shadow: 0 0 8px rgba(73, 80, 87, 0.6); /* Sombra más intensa */
+  }
+  
+  .pedidos-header-filters button {
+    cursor: pointer;
+    transition: all 0.3s;
+    color: rgba(0, 0, 0, 0.7);
+  }
+  
+  .pedidos-header-filters button[disabled] {
+    cursor: not-allowed;
+    color: rgba(150, 150, 150, 0.6);
+    pointer-events: none;
+    transition: none;
+  }
+  
+  .search-input-locked {
+    background-color: rgba(235, 235, 235, 0.6);
+    border: 1px solid rgba(180, 180, 180, 0.6);
+  }
+  
