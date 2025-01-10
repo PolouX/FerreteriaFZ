@@ -113,10 +113,7 @@ const Pedidos = () => {
               <td>{pedido.nombreCliente}</td>
               <td id="pedidos-prioridad">
                 <button
-                  style={{
-                    backgroundColor: pedido.prioridad ? 'red' : 'transparent',
-                    color: pedido.prioridad ? 'white' : 'black',
-                  }}
+                  className={pedido.prioridad ? 'prioridad-activa' : ''}
                   onClick={() => handlePrioridadClick(pedido.id)}
                 >
                   <IonIcon icon={alertOutline} />
