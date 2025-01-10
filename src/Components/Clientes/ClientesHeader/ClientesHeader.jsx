@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IonIcon } from "@ionic/react";
-import { searchOutline, closeOutline } from 'ionicons/icons';
+import { searchOutline, closeOutline, walletOutline } from 'ionicons/icons';
 import { TbFileUpload } from "react-icons/tb";
 import { TbPackageImport } from "react-icons/tb";
 import { LuFileBox } from "react-icons/lu";
@@ -220,6 +220,7 @@ const ClientesHeader = () => {
     setNombreCliente("");
     setProductos([]);
     setSalida("");
+    setCredito(false);
     setIsFormVisible(false);
     setIsDragging(false);
     document.getElementById('file-input').value = '';
@@ -332,6 +333,10 @@ const ClientesHeader = () => {
                   <input type="radio" name='salida' value="Ruta" onChange={handleSalidaChange} />
                   <p>Ruta</p>
                 </span>
+                <button id='clientes-credito' onClick={toggleCredito}>
+                  <IonIcon icon={walletOutline} />
+                </button>
+
               </div>
               <button type="submit" className="clientes-enviar-form">Confirmar</button>
             </form>
