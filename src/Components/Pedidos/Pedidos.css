@@ -58,8 +58,7 @@
 #pedidos-prioridad {
     text-align: center; /* Centra el contenido horizontalmente */
     vertical-align: middle; /* Centra el contenido verticalmente */
-    width: 120px; /* Ancho de la celda */
-
+    width: 135px; /* Ancho de la celda */
   }
   
   /* Estilo para el botón */
@@ -70,11 +69,11 @@
     background-color: transparent; /* Fondo transparente */
     border: 2px solid rgb(83, 83, 83); /* Sin borde */
     cursor: pointer; /* Cursor de puntero */
-    font-size: 15px; /* Tamaño del ícono */
+    font-size: 13px; /* Tamaño del ícono */
     padding: 0; /* Elimina el padding */
     margin: 0; /* Elimina el margen */
-    width: 25px; /* Ancho del botón */
-    height: 25px; /* Altura del botón */
+    width: 23px; /* Ancho del botón */
+    height: 23px; /* Altura del botón */
     border-radius: 100px;
   }
 
@@ -85,6 +84,14 @@
     color: white;
   }
 
+  .prioridad-activa {
+    transition: 1s all;
+    background: linear-gradient(to right, #FF4B4B, #D92332);
+    box-shadow: 0px 0px 15px #FF4B4B;
+    border: none;
+    border: 0px solid transparent !important;
+    color: white;
+  }
 
   .pedidos-header {
     display: flex;
@@ -197,4 +204,3 @@
     background-color: rgba(235, 235, 235, 0.6);
     border: 1px solid rgba(180, 180, 180, 0.6);
   }
-  

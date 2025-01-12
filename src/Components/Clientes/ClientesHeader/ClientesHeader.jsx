@@ -5,8 +5,8 @@ import { TbFileUpload } from "react-icons/tb";
 import { TbPackageImport } from "react-icons/tb";
 import { LuFileBox } from "react-icons/lu";
 import * as XLSX from 'xlsx'; // Importar XLSX para manejar Excel
-import { db } from '../../../firebaseConfig'; // Asegúrate de importar tu configuración de Firebase
-import { collection, doc, setDoc, addDoc } from 'firebase/firestore'; // Importar addDoc
+import { db } from '../../../firebaseConfig'; // Configuración de Firebase
+import { collection, doc, setDoc, addDoc } from 'firebase/firestore'; // Firestore
 import "./ClientesHeader.css";
 
 const ClientesHeader = () => {
@@ -132,14 +132,6 @@ const ClientesHeader = () => {
         (producto) => producto !== null
       );
 
-      // Depuración para verificar productos procesados
-     // console.log('=== DEBUG: Productos procesados ===');
-      //productosValidos.forEach((producto, index) => {
-       // console.log(`Producto ${index + 1}:`, producto);
-   //   });
-     // console.log('=== Fin de debug ===');
-
-      // Actualizar el estado
       setProductos(productosValidos);
 
       console.log('Datos procesados:', {
@@ -164,16 +156,16 @@ const ClientesHeader = () => {
     }
 
     try {
-      let estado = 'Zona BC';
+      let estado = 'En espera - Zona BC';
 
-      const hasZonaA = productos.some(
+      const perteneceZonaA = productos.some(
         (producto) =>
           producto.lugarAlmacenamiento &&
-          producto.lugarAlmacenamiento.startsWith('A')
+          producto.lugarAlmacenamiento.toUpperCase().startsWith('A')
       );
 
-      if (hasZonaA) {
-        estado = 'Zona A';
+      if (perteneceZonaA) {
+        estado = 'En espera - Zona A';
       }
 
       const timestampActual = new Date();

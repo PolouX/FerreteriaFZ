@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { db } from '../../firebaseConfig';
 import { collection, onSnapshot, updateDoc, doc } from 'firebase/firestore';
 import { IonIcon } from "@ionic/react";
-import { alertOutline, searchOutline } from 'ionicons/icons';
+import { alertOutline, searchOutline, arrowForwardOutline } from 'ionicons/icons';
 import "./Pedidos.css";
 
 const Pedidos = () => {
   const [pedidos, setPedidos] = useState([]);
+  const [filteredPedidos, setFilteredPedidos] = useState([]);
   const [pedidosFilter, setPedidosFilter] = useState('Zona A');
   const [searchTerm, setSearchTerm] = useState('');
   const [conteoZonas, setConteoZonas] = useState({
@@ -15,6 +16,43 @@ const Pedidos = () => {
     'Empaquetado': 0,
   });
   const [buscandoPedido, setBuscandoPedido] = useState(false);
+  const [backupPedidos, setBackupPedidos] = useState([]);
+
+  const estadosOrden = [
+    'En espera - Zona A',
+    'Zona A',
+    'En espera - Zona BC',
+    'Zona BC',
+    'En espera - Empaquetado',
+    'Empaquetando',
+    'Finalizado',
+  ];
+
+  const estaEnHorarioLaboral = (date) => {
+    const day = date.getDay();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const totalMinutes = hours * 60 + minutes;
+
+    if (day === 0) return false; // Domingo
+    if (day === 6 && (totalMinutes < 540 || totalMinutes > 840)) return false; // Sábado: 9:00 a 14:00
+    if (day >= 1 && day <= 5 && (totalMinutes < 510 || totalMinutes > 1080)) return false; // Lunes a viernes: 8:30 a 18:00
+    return true;
+  };
+
+  const calcularMinutosLaborales = (timestampInicio) => {
+    const start = new Date(timestampInicio);
+    const now = new Date();
+    let totalMinutes = 0;
+
+    while (start < now) {
+      if (estaEnHorarioLaboral(start)) {
+        totalMinutes++;
+      }
+      start.setMinutes(start.getMinutes() + 1);
+    }
+    return totalMinutes;
+  };
 
   const contarPedidosPorZona = (pedidos) => {
     const zonas = {
@@ -24,9 +62,16 @@ const Pedidos = () => {
     };
 
     pedidos.forEach((pedido) => {
-      if (zonas.hasOwnProperty(pedido.estado)) {
-        zonas[pedido.estado]++;
-      }
+      if (pedido.estado.includes('Zona A')) zonas['Zona A']++;
+      else if (
+        pedido.estado.includes('Zona BC') || 
+        pedido.estado.includes('En espera - Zona BC')
+      ) zonas['Zona BC']++;
+      else if (
+        pedido.estado.includes('Empaquetado') || 
+        pedido.estado.includes('Empaquetando') ||
+        pedido.estado.includes('En espera - Empaquetado')
+      ) zonas['Empaquetado']++;
     });
 
     return zonas;
@@ -43,8 +88,7 @@ const Pedidos = () => {
           const lastZona = pedido.historialEstados[pedido.historialEstados.length - 1];
           if (lastZona.timestampInicio) {
             const lastZonaTimestamp = lastZona.timestampInicio.toMillis();
-            const tiempo = Math.floor((Date.now() - lastZonaTimestamp) / 60000);
-            pedido.tiempo = tiempo >= 0 ? tiempo : 'N/A';
+            pedido.tiempo = calcularMinutosLaborales(lastZonaTimestamp);
           } else {
             pedido.tiempo = 'N/A';
           }
@@ -56,30 +100,97 @@ const Pedidos = () => {
       });
 
       setPedidos(reordenarPedidos(pedidosData));
-      const conteoZonas = contarPedidosPorZona(pedidosData);
-      setConteoZonas(conteoZonas);
+      setBackupPedidos(reordenarPedidos(pedidosData));
+      if (!buscandoPedido) {
+        setFilteredPedidos(
+          reordenarPedidos(pedidosData).filter((pedido) =>
+            pedidosFilter === "Zona BC"
+              ? pedido.estado.includes('Zona BC') || pedido.estado.includes('En espera - Zona BC')
+              : pedidosFilter === "Empaquetado"
+              ? pedido.estado.includes('Empaquetado') || pedido.estado.includes('Empaquetando') || pedido.estado.includes('En espera - Empaquetado')
+              : pedido.estado.includes(pedidosFilter)
+          )
+        );
+      }
+      setConteoZonas(contarPedidosPorZona(pedidosData));
     });
 
     return () => unsubscribe();
+  }, [pedidosFilter, buscandoPedido]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPedidos((prevPedidos) =>
+        prevPedidos.map((pedido) => {
+          if (pedido.historialEstados?.length > 0) {
+            const lastZona = pedido.historialEstados[pedido.historialEstados.length - 1];
+            if (lastZona.timestampInicio) {
+              const lastZonaTimestamp = lastZona.timestampInicio.toMillis();
+              pedido.tiempo = calcularMinutosLaborales(lastZonaTimestamp);
+            }
+          }
+          return pedido;
+        })
+      );
+    }, 60000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const reordenarPedidos = (pedidos) => {
-    return pedidos.sort((a, b) => b.prioridad - a.prioridad);
+    return pedidos
+      .filter((pedido) => pedido.estado !== 'Finalizado')
+      .sort((a, b) => {
+        if (a.estado.includes('En espera') && !b.estado.includes('En espera')) return -1;
+        if (!a.estado.includes('En espera') && b.estado.includes('En espera')) return 1;
+        return b.prioridad - a.prioridad;
+      });
   };
 
-  const handlePrioridadClick = async (id) => {
+  const avanzarEstado = async (id, estadoActual) => {
     try {
       const pedidoRef = doc(db, 'pedidos', id);
-      const pedidoActual = pedidos.find((pedido) => pedido.id === id);
+      const nuevoEstado = estadosOrden[estadosOrden.indexOf(estadoActual) + 1] || estadoActual;
 
-      await updateDoc(pedidoRef, { prioridad: !pedidoActual.prioridad });
+      if (nuevoEstado !== estadoActual) {
+        await updateDoc(pedidoRef, {
+          estado: nuevoEstado,
+          historialEstados: [
+            ...pedidos.find((pedido) => pedido.id === id).historialEstados,
+            { estado: nuevoEstado, timestampInicio: new Date() },
+          ],
+        });
 
-      const pedidosActualizados = pedidos.map((pedido) =>
-        pedido.id === id ? { ...pedido, prioridad: !pedido.prioridad } : pedido
-      );
-      setPedidos(reordenarPedidos(pedidosActualizados));
+        console.log(`Pedido ${id} avanzó al estado: ${nuevoEstado}`);
+      }
     } catch (error) {
-      console.error('Error al actualizar la prioridad:', error);
+      console.error('Error al avanzar el estado:', error);
+    }
+  };
+
+  const cambiarPrioridad = async (id, prioridadActual, estadoActual) => {
+    if (estadoActual.includes('En espera')) {
+      try {
+        const pedidoRef = doc(db, 'pedidos', id);
+        await updateDoc(pedidoRef, { prioridad: !prioridadActual });
+
+        const pedidosActualizados = pedidos.map((pedido) =>
+          pedido.id === id ? { ...pedido, prioridad: !prioridadActual } : pedido
+        );
+
+        setPedidos(reordenarPedidos(pedidosActualizados));
+        setFilteredPedidos(
+          reordenarPedidos(pedidosActualizados).filter((pedido) =>
+            pedidosFilter === "Zona BC"
+              ? pedido.estado.includes('Zona BC') || pedido.estado.includes('En espera - Zona BC')
+              : pedidosFilter === "Empaquetado"
+              ? pedido.estado.includes('Empaquetado') || pedido.estado.includes('Empaquetando') || pedido.estado.includes('En espera - Empaquetado')
+              : pedido.estado.includes(pedidosFilter)
+          )
+        );
+      } catch (error) {
+        console.error('Error al cambiar la prioridad:', error);
+      }
     }
   };
 
@@ -94,51 +205,46 @@ const Pedidos = () => {
 
       if (pedidoEncontrado) {
         setBuscandoPedido(true);
-        setPedidosFilter(pedidoEncontrado.estado);
-        setPedidos([pedidoEncontrado]);
+        setPedidosFilter(
+          pedidoEncontrado.estado.includes('Zona A') ? 'Zona A' :
+          pedidoEncontrado.estado.includes('Zona BC') || pedido.estado.includes('En espera - Zona BC')
+            ? 'Zona BC'
+            : 'Empaquetado'
+        );
+        setFilteredPedidos([pedidoEncontrado]);
       } else {
         alert('Pedido no encontrado');
       }
-    } else {
-      resetPedidos();
     }
   };
 
   const resetPedidos = () => {
     setSearchTerm('');
     setBuscandoPedido(false);
-
-    const pedidosRef = collection(db, 'pedidos');
-    onSnapshot(pedidosRef, (snapshot) => {
-      const pedidosData = snapshot.docs.map((doc) => {
-        const pedido = { id: doc.id, ...doc.data() };
-
-        if (pedido.historialEstados && pedido.historialEstados.length > 0) {
-          const lastZona = pedido.historialEstados[pedido.historialEstados.length - 1];
-          if (lastZona.timestampInicio) {
-            const lastZonaTimestamp = lastZona.timestampInicio.toMillis();
-            const tiempo = Math.floor((Date.now() - lastZonaTimestamp) / 60000);
-            pedido.tiempo = tiempo >= 0 ? tiempo : 'N/A';
-          } else {
-            pedido.tiempo = 'N/A';
-          }
-        } else {
-          pedido.tiempo = 'N/A';
-        }
-
-        return pedido;
-      });
-
-      setPedidos(reordenarPedidos(pedidosData));
-    });
+    setFilteredPedidos(
+      backupPedidos.filter((pedido) =>
+        pedidosFilter === "Zona BC"
+          ? pedido.estado.includes('Zona BC') || pedido.estado.includes('En espera - Zona BC')
+          : pedidosFilter === "Empaquetado"
+          ? pedido.estado.includes('Empaquetado') || pedido.estado.includes('Empaquetando') || pedido.estado.includes('En espera - Empaquetado')
+          : pedido.estado.includes(pedidosFilter)
+      )
+    );
   };
 
-  const getFilteredPedidos = () => {
-    if (buscandoPedido) {
-      return pedidos;
+  const handleFilterChange = (filter) => {
+    if (!buscandoPedido) {
+      setPedidosFilter(filter);
+      setFilteredPedidos(
+        backupPedidos.filter((pedido) =>
+          filter === "Zona BC"
+            ? pedido.estado.includes('Zona BC') || pedido.estado.includes('En espera - Zona BC')
+            : filter === "Empaquetado"
+            ? pedido.estado.includes('Empaquetado') || pedido.estado.includes('Empaquetando') || pedido.estado.includes('En espera - Empaquetado')
+            : pedido.estado.includes(filter)
+        )
+      );
     }
-
-    return pedidos.filter((pedido) => pedido.estado === pedidosFilter);
   };
 
   return (
@@ -147,21 +253,21 @@ const Pedidos = () => {
         <div className="pedidos-header-filters">
           <button
             className={pedidosFilter === "Zona A" ? "pedidos-filter-selected" : ""}
-            onClick={() => !buscandoPedido && setPedidosFilter('Zona A')}
+            onClick={() => handleFilterChange('Zona A')}
             disabled={buscandoPedido}
           >
             Zona A ({conteoZonas['Zona A']})
           </button>
           <button
             className={pedidosFilter === "Zona BC" ? "pedidos-filter-selected" : ""}
-            onClick={() => !buscandoPedido && setPedidosFilter('Zona BC')}
+            onClick={() => handleFilterChange('Zona BC')}
             disabled={buscandoPedido}
           >
             Zona BC ({conteoZonas['Zona BC']})
           </button>
           <button
             className={pedidosFilter === "Empaquetado" ? "pedidos-filter-selected" : ""}
-            onClick={() => !buscandoPedido && setPedidosFilter('Empaquetado')}
+            onClick={() => handleFilterChange('Empaquetado')}
             disabled={buscandoPedido}
           >
             Empaquetado ({conteoZonas['Empaquetado']})
@@ -182,9 +288,8 @@ const Pedidos = () => {
             type="text"
             placeholder="Buscar un pedido..."
             value={searchTerm}
-            onChange={(e) => buscandoPedido || setSearchTerm(e.target.value)}
-            readOnly={buscandoPedido}
-            className={buscandoPedido ? "search-input-locked" : ""}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            disabled={buscandoPedido}
           />
         </form>
       </div>
@@ -194,33 +299,47 @@ const Pedidos = () => {
             <tr>
               <th>Pedido</th>
               <th>Nombre</th>
-              <th id="pedidos-prioridad">Prioridad</th>
+              {!pedidosFilter.includes("Empaquetado") && <th>Prioridad</th>}
               <th>Llegada</th>
-              <th id="pedidos-time">Tiempo (min)</th>
+              <th>Tiempo (min)</th>
+              <th>Estado</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {getFilteredPedidos().map((pedido) => (
+            {filteredPedidos.map((pedido) => (
               <tr key={pedido.id}>
                 <td>{pedido.numeroPedido}</td>
                 <td>{pedido.nombreCliente}</td>
-                <td id="pedidos-prioridad">
-                  <button
-                    style={{
-                      backgroundColor: pedido.prioridad ? 'red' : 'transparent',
-                      color: pedido.prioridad ? 'white' : 'black',
-                    }}
-                    onClick={() => handlePrioridadClick(pedido.id)}
-                  >
-                    <IonIcon icon={alertOutline} />
-                  </button>
-                </td>
+                {!pedidosFilter.includes("Empaquetado") && (
+                  <td id="pedidos-prioridad">
+                    <button
+                      style={{
+                        backgroundColor: pedido.prioridad ? 'red' : 'transparent',
+                        color: pedido.prioridad ? 'white' : 'black',
+                      }}
+                      onClick={() => cambiarPrioridad(pedido.id, pedido.prioridad, pedido.estado)}
+                      disabled={!pedido.estado.includes('En espera')}
+                    >
+                      <IonIcon icon={alertOutline} />
+                    </button>
+                  </td>
+                )}
                 <td>
                   {pedido.timestamp
                     ? new Date(pedido.timestamp.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                     : 'Sin registro'}
                 </td>
                 <td>{pedido.tiempo}</td>
+                <td>{pedido.estado}</td>
+                <td>
+                  <button
+                    onClick={() => avanzarEstado(pedido.id, pedido.estado)}
+                    className="advance-button"
+                  >
+                    <IonIcon icon={arrowForwardOutline} />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
