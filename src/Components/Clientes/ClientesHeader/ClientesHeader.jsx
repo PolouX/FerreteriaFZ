@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IonIcon } from "@ionic/react";
-import { searchOutline, closeOutline } from 'ionicons/icons';
+import { searchOutline, closeOutline, walletOutline } from 'ionicons/icons';
 import { TbFileUpload } from "react-icons/tb";
 import { TbPackageImport } from "react-icons/tb";
 import { LuFileBox } from "react-icons/lu";
@@ -21,6 +21,18 @@ const ClientesHeader = () => {
   const [zona, setZona] = useState("");
   const [subZona, setSubZona] = useState("");
   const [clientesFilters, setClientesFilters] = useState("Activos");
+  const [creditoActivo, setCreditoActivo] = useState(false); // Estado para manejar "Crédito"
+  const [searchTerm, setSearchTerm] = useState(""); // Estado para el término de búsqueda
+  const [filteredPedidos, setFilteredPedidos] = useState([]); // Pedidos filtrados
+
+
+  const toggleCredito = () => {
+    setCreditoActivo((prev) => {
+      console.log(`Crédito activado: ${!prev}`);
+      return !prev;
+    });
+  };
+  
 
   const handleFileClick = () => {
     document.getElementById('file-input').click();
@@ -156,17 +168,23 @@ const ClientesHeader = () => {
     }
 
     try {
-      let estado = 'En espera - Zona BC';
+      let estado;
 
-      const perteneceZonaA = productos.some(
-        (producto) =>
-          producto.lugarAlmacenamiento &&
-          producto.lugarAlmacenamiento.toUpperCase().startsWith('A')
-      );
+if (creditoActivo) {
+  estado = 'Pendiente de aprobación'; // No se inicia proceso, solo espera autorización
+} else {
+  estado = 'En espera - Zona BC';
 
-      if (perteneceZonaA) {
-        estado = 'En espera - Zona A';
-      }
+  const perteneceZonaA = productos.some(
+    (producto) =>
+      producto.lugarAlmacenamiento &&
+      producto.lugarAlmacenamiento.toUpperCase().startsWith('A')
+  );
+
+  if (perteneceZonaA) {
+    estado = 'En espera - Zona A';
+  }
+}
 
       const timestampActual = new Date();
       const pedidoRef = doc(db, 'pedidos', pedidoNumero);
@@ -180,8 +198,8 @@ const ClientesHeader = () => {
         backorder: false,
         prioridad: false,
         estado: estado,
-        zona: zona,
-        subZona: subZona,
+        zona: creditoActivo ? '' : zona, // La zona solo aplica si no es crédito
+      subZona: creditoActivo ? '' : subZona,
         timestamp: timestampActual,
         historialEstados: [
           {
@@ -189,6 +207,7 @@ const ClientesHeader = () => {
             timestampInicio: timestampActual,
           },
         ],
+        credito: creditoActivo, // Agregar información de crédito
       });
 
       const productosCollectionRef = collection(pedidoRef, 'productos');
@@ -212,6 +231,7 @@ const ClientesHeader = () => {
     setNombreCliente("");
     setProductos([]);
     setSalida("");
+    setCreditoActivo(false); // Resetear el estado de crédito
     setIsFormVisible(false);
     setIsDragging(false);
     document.getElementById('file-input').value = '';
@@ -254,6 +274,12 @@ const ClientesHeader = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+  
+    if (creditoActivo && !salida) {
+      alert("Debes seleccionar si el pedido es para Ruta o Mostrador al activar Crédito.");
+      return;
+    }
+  
     saveOrderToFirebase();
   };
 
@@ -272,6 +298,7 @@ const ClientesHeader = () => {
             <IonIcon icon={searchOutline} className='clientes-search-icon' />
             <input type="text" placeholder='Buscar un pedido...' />
           </div>
+          
           <button onClick={handleFormShow}>Capturar</button>
 
           {isFormVisible && (
@@ -324,6 +351,9 @@ const ClientesHeader = () => {
                   <input type="radio" name='salida' value="Ruta" onChange={handleSalidaChange} />
                   <p>Ruta</p>
                 </span>
+                <button id='clientes-credito' onClick={toggleCredito}>
+                  <IonIcon icon={walletOutline} />
+                </button>
               </div>
               <button type="submit" className="clientes-enviar-form">Confirmar</button>
             </form>

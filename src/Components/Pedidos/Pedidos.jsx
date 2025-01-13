@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../../firebaseConfig';
-import { collection, onSnapshot, updateDoc, doc } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, updateDoc, doc } from 'firebase/firestore';
 import { IonIcon } from "@ionic/react";
 import { alertOutline, searchOutline, arrowForwardOutline } from 'ionicons/icons';
 import "./Pedidos.css";
@@ -79,6 +79,7 @@ const Pedidos = () => {
 
   useEffect(() => {
     const pedidosRef = collection(db, 'pedidos');
+    const pedidosCreditoQuery = query(pedidosRef, where('credito', '==', true));
 
     const unsubscribe = onSnapshot(pedidosRef, (snapshot) => {
       const pedidosData = snapshot.docs.map((doc) => {

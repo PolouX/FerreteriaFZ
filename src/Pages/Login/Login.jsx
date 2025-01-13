@@ -37,17 +37,23 @@ const Login = () => {
         setIsAuthenticated(true);
         setUser(userData); 
 
-     
+        // Redirecciones según los permisos del usuario
         if (userData.permisos.includes('Admin')) {
           navigate("/admin/usuarios");
         } else if (userData.permisos.includes('credito')) {
           navigate("/credito");
         } else if (userData.permisos.includes('clientes')) {
           navigate("/clientes");
+        } else if (
+          userData.permisos.includes('zonaA') || 
+          userData.permisos.includes('zonaBC') || 
+          userData.permisos.includes('empaquetado')
+        ) {
+          navigate("/almacen");
         } else {
-          // Manejar otros casos o redirigir a una página de error
           navigate("/login");
         }
+        
       }
     } catch (err) {
       console.log('Error buscando el usuario');
@@ -97,4 +103,3 @@ const Login = () => {
 }
 
 export default Login;
-
