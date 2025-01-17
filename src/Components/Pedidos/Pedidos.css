@@ -204,4 +204,101 @@
     background-color: rgba(235, 235, 235, 0.6);
     border: 1px solid rgba(180, 180, 180, 0.6);
   }
+
+/* Estilo del campo de búsqueda */
+.modal-content input {
+    width: 100%; /* Ocupa todo el ancho disponible */
+    padding: 10px 15px; /* Espaciado interno */
+    margin-bottom: 20px; /* Espaciado inferior */
+    border: 1px solid #ccc; /* Borde gris claro */
+    border-radius: 5px; /* Bordes redondeados */
+    outline: none; /* Sin borde al hacer clic */
+    font-size: 14px; /* Tamaño de fuente */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); /* Efecto interno de sombra */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transiciones suaves */
+}
+
+.modal-content button {
+    background-color: red;
+    box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.6);
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+    padding: 10px 20px; /* Espaciado interno */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Indica que es clickeable */
+    font-size: 14px; /* Tamaño de fuente */
+    font-weight: bold; /* Negritas */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Efectos de transición */
+}
+
+.modal-content h2 {
+    margin-bottom: 10px; /* Aumenta el espacio debajo del título */
+}
+
+.modal-content table {
+    margin-bottom: 25px; /* Aumenta el espacio debajo de la tabla */
+}
+
+
+.modal-content button:hover {
+    box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.6);
+}
+
+/* Ajustes generales del modal */
+.modal-overlay .modal-content {
+    background: #ffffff;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    min-width: 50%;
+    text-align: center;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.25);
+    border: 1px solid #ddd;
+}
+
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+  }
+  
+  th {
+    background: #f4f4f4;
+  }
+
+  .pedidos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .pedidos-header-filters-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espacio entre los filtros y el botón "Ver Todos" */
+  }
+  
+  .pedidos-header-filters {
+    display: flex;
+
+  }
+  
+  .todos-button {
+    background-color: red;
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+    padding: 8px 16px; /* Espaciado interno */
+    border-radius: 4px; /* Bordes redondeados */
+    cursor: pointer; /* Indica que es clickeable */
+    font-weight: bold; /* Texto en negritas */
+    transition: background-color 0.3s ease; /* Efecto suave al pasar el mouse */
+  }
+  
+  
   

@@ -6,59 +6,88 @@ import "./ClientesPedidos.css";
 const ClientesPedidos = () => {
   const [pedidos, setPedidos] = useState([]);
   const [filteredPedidos, setFilteredPedidos] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [clientesFilters, setClientesFilters] = useState("Activos"); // Filtro seleccionado
+  const [searchTerm, setSearchTerm] = useState(""); // Término de búsqueda
+  const [conteos, setConteos] = useState({
+    pendientes: 0,
+    activos: 0,
+    facturas: 0,
+  });
 
+  // Escuchar cambios en Firebase
   useEffect(() => {
     const pedidosRef = collection(db, 'pedidos');
-
-    // Escuchar cambios en tiempo real
     const unsubscribe = onSnapshot(pedidosRef, (snapshot) => {
       const pedidosData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
       setPedidos(pedidosData);
-      setFilteredPedidos(pedidosData); // Inicialmente, mostrar todos
     });
 
     return () => unsubscribe();
   }, []);
 
+  // Calcular conteos
+  useEffect(() => {
+    const pendientes = pedidos.filter(
+      (pedido) => pedido.estado === "Pendiente de aprobación" && pedido.credito
+    ).length;
+
+    const activos = pedidos.filter(
+      (pedido) => pedido.estado !== "Finalizado" && pedido.estado !== "Pendiente de aprobación"
+    ).length;
+
+    const facturas = pedidos.filter((pedido) => pedido.estado === "Finalizado").length;
+
+    setConteos({ pendientes, activos, facturas });
+  }, [pedidos]);
+
+  // Filtrar pedidos en función del filtro seleccionado y término de búsqueda
+  useEffect(() => {
+    let filtered = pedidos;
+
+    // Aplicar filtro según el estado
+    switch (clientesFilters) {
+      case "Pendientes":
+        filtered = pedidos.filter(
+          (pedido) => pedido.estado === "Pendiente de aprobación" && pedido.credito
+        );
+        break;
+      case "Activos":
+        filtered = pedidos.filter(
+          (pedido) => pedido.estado !== "Finalizado" && pedido.estado !== "Pendiente de aprobación"
+        );
+        break;
+      case "Facturas":
+        filtered = pedidos.filter((pedido) => pedido.estado === "Finalizado");
+        break;
+      default:
+        filtered = pedidos;
+    }
+
+    // Aplicar filtro por término de búsqueda
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (pedido) =>
+          pedido.numeroPedido.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          pedido.nombreCliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          pedido.numeroCliente.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    setFilteredPedidos(filtered);
+  }, [clientesFilters, pedidos, searchTerm]);
+
+
+  
   // Función para manejar la búsqueda
   const handleSearch = (event) => {
-    const term = event.target.value.toLowerCase();
-    setSearchTerm(term);
-
-    if (term.trim() === "") {
-      setFilteredPedidos(pedidos);
-    } else {
-      const results = pedidos.filter(
-        (pedido) =>
-          pedido.numeroPedido.toLowerCase().includes(term) ||
-          pedido.nombreCliente.toLowerCase().includes(term) ||
-          pedido.numeroCliente.toLowerCase().includes(term)
-      );
-      setFilteredPedidos(results);
-    }
+    setSearchTerm(event.target.value);
   };
 
-  // Función para destacar y ordenar pedidos que cumplen con las condiciones
-  const getDestacadosYOrdenados = () => {
-    const destacados = filteredPedidos.filter((pedido) => {
-      // Destacar solo si el estado es "En espera"
-      return pedido.estado.toLowerCase().includes("en espera");
-    });
-
-    const noDestacados = filteredPedidos.filter(
-      (pedido) => !pedido.estado.toLowerCase().includes("en espera")
-    );
-
-    return [...destacados, ...noDestacados];
-  };
-
-  // Función para borrar un pedido si cumple las condiciones
+  // Función para borrar un pedido
   const borrarPedido = async (id, estado, historialEstados) => {
-    // Validar si el historial tiene más de un estado (ya pasó de "En espera")
     if (historialEstados && historialEstados.length > 1) {
       alert("No se puede borrar el pedido porque ya inició un proceso.");
       return;
@@ -76,13 +105,37 @@ const ClientesPedidos = () => {
     }
   };
 
-  const destacadosYOrdenados = getDestacadosYOrdenados();
-
   return (
     <div className="clientes-pedidos">
+      {/* Filtros */}
       <div className="clientes-header">
-        {/* Campo de búsqueda */}
+        <div className="clientes-left-filters">
+          <button
+            className={clientesFilters === "Pendientes" ? "clientesFilterSelected" : ""}
+            onClick={() => setClientesFilters("Pendientes")}
+          >
+            Pendientes ({conteos.pendientes})
+          </button>
+          <button
+            className={clientesFilters === "Activos" ? "clientesFilterSelected" : ""}
+            onClick={() => setClientesFilters("Activos")}
+          >
+            Activos ({conteos.activos})
+          </button>
+          <button
+            className={clientesFilters === "Facturas" ? "clientesFilterSelected" : ""}
+            onClick={() => setClientesFilters("Facturas")}
+          >
+            Facturas ({conteos.facturas})
+          </button>
+        </div>
         <div className="clientes-search">
+          <input
+            type="text"
+            placeholder="Buscar un pedido..."
+            value={searchTerm}
+            onChange={handleSearch}
+          />
         </div>
       </div>
 
@@ -100,16 +153,9 @@ const ClientesPedidos = () => {
           </tr>
         </thead>
         <tbody>
-          {destacadosYOrdenados.length > 0 ? (
-            destacadosYOrdenados.map((pedido) => (
-              <tr
-                key={pedido.id}
-                className={
-                  pedido.estado.toLowerCase().includes("en espera")
-                    ? "destacado"
-                    : ""
-                }
-              >
+          {filteredPedidos.length > 0 ? (
+            filteredPedidos.map((pedido) => (
+              <tr key={pedido.id}>
                 <td>{pedido.numeroPedido}</td>
                 <td>{pedido.numeroCliente}</td>
                 <td>{pedido.nombreCliente}</td>
@@ -118,13 +164,7 @@ const ClientesPedidos = () => {
                 <td>{pedido.estado}</td>
                 <td>
                   <button
-                    onClick={() =>
-                      borrarPedido(
-                        pedido.id,
-                        pedido.estado,
-                        pedido.historialEstados
-                      )
-                    }
+                    onClick={() => borrarPedido(pedido.id, pedido.estado, pedido.historialEstados)}
                     style={{
                       color: "red",
                       border: "none",

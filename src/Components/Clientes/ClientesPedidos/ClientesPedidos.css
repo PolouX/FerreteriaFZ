@@ -1,59 +1,97 @@
+/* General */
 .clientes-pedidos {
     text-align: left;
-    display: flex;
     margin-top: 30px;
-    width: 100%; /* Asegura que la tabla ocupe todo el ancho del contenedor */
-}
-
-.clientes-pedidos table {
-    border-collapse: separate; /* Cambiar a separate */
-    border-spacing: 0; /* Elimina los espacios entre celdas */
     width: 100%;
-    overflow: hidden; /* Asegura que el contenido no sobresalga */
-}
-
-.clientes-pedidos thead th {
-    border: 1px solid rgb(125, 125, 125);
-    border-bottom: 0px;
-    border-right: 0px;
-    padding: 10px 18px;
-    font-weight: 600;
-    background-color: #f2f2f2; /* Color de fondo opcional para encabezados */
-}
-
-.clientes-pedidos tbody td {
-    border: 1px solid rgb(125, 125, 125);
-    border-bottom: 0px;
-    border-right: 0px;
-    padding: 10px 18px;
-}
-
-/* Aplica el border-radius a las esquinas de la tabla */
-.clientes-pedidos table thead th:first-child {
-    border-top-left-radius: 8px;
-}
-
-.clientes-pedidos table thead th:last-child {
-    border-top-right-radius: 8px;
-    border-right: 1px solid rgb(125, 125, 125);
-}
-
-.clientes-pedidos table tbody tr:last-child td:first-child {
-    border-bottom-left-radius: 8px;
-}
-
-.clientes-pedidos table tbody tr:last-child td:last-child {
-    border-bottom-right-radius: 8px;
-}
-
-.clientes-pedidos table tbody tr:last-child td {
-    border-bottom: 1px solid rgb(125, 125, 125);
-}
-
-.clientes-pedidos table tbody td:last-child {
-    border-right: 1px solid rgb(125, 125, 125);
-}
-
-#clientes-bo {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .clientes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .pedidos-header-filters {
+    display: flex;
+  }
+  
+  .pedidos-header-filters button {
+    padding: 8px 15px;
+    border: none;
+    background-color: transparent;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .pedidos-header-filters button:hover {
+    color: black;
+    border-bottom: 2px solid red;
+  }
+  
+  .pedidos-filter-selected {
+    border-bottom: 2px solid red;
+    color: red;
+  }
+  
+  .pedidos-search {
+    display: flex;
+    align-items: center;
+  }
+  
+  .pedidos-search input {
+    height: 40px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+  }
+  
+  .pedidos-search-icon {
+    margin-right: 10px;
+    color: #999;
+  }
+  
+  /* Tabla */
+  .pedidos table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .pedidos thead th {
+    background-color: #f8f8f8;
+    padding: 12px 15px;
+    border-bottom: 2px solid #ddd;
     text-align: center;
-}
+  }
+  
+  .pedidos tbody td {
+    padding: 10px 15px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .pedidos tbody tr:hover {
+    background-color: #f9f9f9;
+    cursor: pointer;
+  }
+
+/* Estilo cuando el botón de Crédito está activo */
+    #clientes-credito.active {
+    background-color:red; /* Fondo rojo discreto cuando está activo */
+    color: white; /* Texto blanco cuando está activo */
+  }
+  
+  /* Estilo cuando el botón de Crédito no está activo */
+    #clientes-credito {
+    background-color: #f0f0f0; /* Fondo gris claro cuando no está activo */
+    color: black; /* Texto negro cuando no está activo */
+  }
+  
+  
+  

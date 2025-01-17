@@ -13,8 +13,10 @@ const ClientesHeader = () => {
   const [file, setFile] = useState(null);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isDragging, setIsDragging] = useState(false); // Estado para manejar el arrastre
-  const [salida, setSalida] = useState(""); // Estado para el tipo de salida
+  const [salida, setSalida] = useState("Ruta"); // Aquí predefinimos como "Ruta"
   const [pedidoNumero, setPedidoNumero] = useState(""); // Estado para almacenar el número de pedido
+  const [nota, setNota] = useState(""); // Para almacenar la nota del pedido
+  const [isNoteModalVisible, setIsNoteModalVisible] = useState(false); // Estado para el modal de la nota
   const [numeroCliente, setNumeroCliente] = useState(""); // Estado para almacenar el número de cliente
   const [nombreCliente, setNombreCliente] = useState(""); // Estado para almacenar el nombre del cliente
   const [productos, setProductos] = useState([]); // Estado para almacenar los productos procesados
@@ -24,8 +26,6 @@ const ClientesHeader = () => {
   const [creditoActivo, setCreditoActivo] = useState(false); // Estado para manejar "Crédito"
   const [searchTerm, setSearchTerm] = useState(""); // Estado para el término de búsqueda
   const [filteredPedidos, setFilteredPedidos] = useState([]); // Pedidos filtrados
-
-
   const toggleCredito = () => {
     setCreditoActivo((prev) => {
       console.log(`Crédito activado: ${!prev}`);
@@ -33,7 +33,6 @@ const ClientesHeader = () => {
     });
   };
   
-
   const handleFileClick = () => {
     document.getElementById('file-input').click();
   };
@@ -139,6 +138,14 @@ const ClientesHeader = () => {
         }
       });
 
+      const calcularConteos = (pedidos) => {
+        const activos = pedidos.filter((pedido) => pedido.estado !== "Finalizado" && pedido.estado !== "Pendiente de aprobación").length;
+        const pendientes = pedidos.filter((pedido) => pedido.estado === "Pendiente de aprobación").length;
+        const facturas = pedidos.filter((pedido) => pedido.estado === "Finalizado").length;
+      
+        setConteosClientes({ activos, pendientes, facturas });
+      };
+
       // Filtrar productos válidos
       const productosValidos = productosProcesados.filter(
         (producto) => producto !== null
@@ -194,6 +201,7 @@ if (creditoActivo) {
         numeroCliente: numeroCliente,
         nombreCliente: nombreCliente,
         salida: salida,
+        nota: nota,
         activo: true,
         backorder: false,
         prioridad: false,
@@ -230,7 +238,8 @@ if (creditoActivo) {
     setSubZona("");
     setNombreCliente("");
     setProductos([]);
-    setSalida("");
+    setSalida("Ruta");
+    setNota("");
     setCreditoActivo(false); // Resetear el estado de crédito
     setIsFormVisible(false);
     setIsDragging(false);
@@ -274,35 +283,51 @@ if (creditoActivo) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-  
-    if (creditoActivo && !salida) {
-      alert("Debes seleccionar si el pedido es para Ruta o Mostrador al activar Crédito.");
+
+    if (!file) {
+      alert("Por favor, sube un archivo antes de confirmar.");
       return;
     }
-  
-    saveOrderToFirebase();
+    if (!salida || (salida !== "Ruta" && salida !== "Mostrador")) {
+      alert("Por favor, selecciona si el pedido es para Mostrador o Ruta.");
+      return;
+    }
+    setIsNoteModalVisible(true);
   };
-
+  
   return (
     <>
       <div className="clientes-header">
-        <div className="clientes-left-filters">
-          <button className={clientesFilters === "Activos" ? "clientesFilterSelected " : ""} onClick={() => setClientesFilters("Activos")}>
-            Activos
-          </button>
-          <button className={clientesFilters === "Facturas" ? "clientesFilterSelected " : ""} onClick={() => setClientesFilters("Facturas")}>Facturas</button>
-        </div>
-
         <div className="clientes-right-filters">
-          <div className="clientes-search">
-            <IonIcon icon={searchOutline} className='clientes-search-icon' />
-            <input type="text" placeholder='Buscar un pedido...' />
-          </div>
           
           <button onClick={handleFormShow}>Capturar</button>
-
           {isFormVisible && (
             <form className={`clientes-form ${isFormVisible ? 'visible' : ''}`} onSubmit={handleSubmit}>
+{/* Modal para la nota */}
+{isNoteModalVisible && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <h2>Agregar Nota</h2>
+      <textarea
+        placeholder="Escribe una nota para este pedido..."
+        value={nota}
+        onChange={(e) => setNota(e.target.value)}
+      />
+      <div className="modal-buttons">
+        <button onClick={() => setIsNoteModalVisible(false)}>Cancelar</button>
+        <button
+          onClick={() => {
+            setIsNoteModalVisible(false);
+            saveOrderToFirebase(); // Guardar pedido
+          }}
+        >
+          Confirmar Nota
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
               <button type="button" className="clientes-close-form" onClick={handleFormShow}>
                 <IonIcon icon={closeOutline} />
               </button>
@@ -344,21 +369,43 @@ if (creditoActivo) {
               </div>
               <div className="clientes-checkbox">
                 <span className="clientes-opciones">
-                  <input type="radio" name='salida' value="Mostrador" onChange={handleSalidaChange} />
+                  <input 
+                  type="radio" 
+                  name='salida' 
+                  value="Mostrador" 
+                  onChange={handleSalidaChange}
+                  checked={salida == "Mostrador"}
+                  />
                   <p>Mostrador</p>
                 </span>
                 <span className="clientes-opciones">
-                  <input type="radio" name='salida' value="Ruta" onChange={handleSalidaChange} />
+                  <input 
+                  type="radio" 
+                  name='salida' 
+                  value="Ruta" 
+                  onChange={handleSalidaChange} 
+                  checked={salida === "Ruta" || !salida}
+                  />
                   <p>Ruta</p>
                 </span>
-                <button id='clientes-credito' onClick={toggleCredito}>
+                <button id='clientes-credito' 
+                type="button"
+                onClick={toggleCredito}
+                className={creditoActivo ? 'active' : ''}
+                >
                   <IonIcon icon={walletOutline} />
                 </button>
+                
               </div>
-              <button type="submit" className="clientes-enviar-form">Confirmar</button>
+              <div className="clientes-nota">
+</div>
+<button type="submit" 
+className="clientes-enviar-form">Confirmar</button>
+
             </form>
           )}
         </div>
+        
       </div>
       <div className="clientes-content">
       </div>

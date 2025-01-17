@@ -5,6 +5,9 @@ import './Credito.css';
 
 const Credito = () => {
   const [pedidos, setPedidos] = useState([]);
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [accionSeleccionada, setAccionSeleccionada] = useState(null);
+  const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null);
 
   useEffect(() => {
     const pedidosRef = collection(db, 'pedidos');
@@ -107,6 +110,30 @@ const Credito = () => {
     }
   };
 
+  // Abrir el modal de confirmación
+  const abrirModal = (pedido, accion) => {
+    setPedidoSeleccionado(pedido);
+    setAccionSeleccionada(accion);
+    setMostrarModal(true);
+  };
+
+  // Confirmar la acción en el modal
+  const confirmarAccion = () => {
+    if (accionSeleccionada === 'aceptar') {
+      aceptarPedido(pedidoSeleccionado.id);
+    } else if (accionSeleccionada === 'rechazar') {
+      rechazarPedido(pedidoSeleccionado.id);
+    }
+    cerrarModal();
+  };
+
+  // Cerrar el modal
+  const cerrarModal = () => {
+    setPedidoSeleccionado(null);
+    setAccionSeleccionada(null);
+    setMostrarModal(false);
+  };
+
   return (
     <div className="clientes-pedidos">
       {/* Tabla de pedidos */}
@@ -131,7 +158,7 @@ const Credito = () => {
                 <td>{pedido.tiempo || 'Sin datos'}</td>
                 <td>
                   <button
-                    onClick={() => aceptarPedido(pedido.id)}
+                    onClick={() => abrirModal(pedido, 'aceptar')}
                     style={{
                       color: 'green',
                       fontSize: '16px',
@@ -145,7 +172,7 @@ const Credito = () => {
                 </td>
                 <td>
                   <button
-                    onClick={() => rechazarPedido(pedido.id)}
+                    onClick={() => abrirModal(pedido, 'rechazar')}
                     style={{
                       color: 'red',
                       fontSize: '16px',
@@ -166,6 +193,33 @@ const Credito = () => {
           )}
         </tbody>
       </table>
+
+{/* Modal de confirmación */}
+{mostrarModal && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <h2 className={accionSeleccionada === 'aceptar' ? 'modal-title-aceptar' : 'modal-title-rechazar'}>
+        {accionSeleccionada === 'aceptar' ? 'Aceptar Pedido' : 'Rechazar Pedido'}
+      </h2>
+      <p>
+        ¿Estás seguro que deseas {accionSeleccionada} el pedido{' '}
+        <strong>{pedidoSeleccionado?.numeroPedido || 'N/A'}</strong>?
+      </p>
+      <div className="modal-actions">
+        <button
+          onClick={confirmarAccion}
+          className={accionSeleccionada === 'aceptar' ? 'btn-aceptar' : 'btn-rechazar'}
+        >
+          {accionSeleccionada === 'aceptar' ? 'Aceptar' : 'Rechazar'}
+        </button>
+        <button onClick={cerrarModal} className="btn-cancelar">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

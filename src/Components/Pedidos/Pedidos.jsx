@@ -17,6 +17,10 @@ const Pedidos = () => {
   });
   const [buscandoPedido, setBuscandoPedido] = useState(false);
   const [backupPedidos, setBackupPedidos] = useState([]);
+  const [showModal, setShowModal] = useState(false); // Estado para el modal
+  const [modalSearchTerm, setModalSearchTerm] = useState(''); // Estado para el término de búsqueda en el modal
+  
+
 
   const estadosOrden = [
     'En espera - Zona A',
@@ -233,6 +237,22 @@ const Pedidos = () => {
     );
   };
 
+  const traducirEstado = (estado) => {
+    if (estado.includes("En espera")) {
+      return "En espera";
+    } else if (estado.includes("Zona A")) {
+      return "Surtiendo";
+    } else if (estado.includes("Zona BC")) {
+      return "Surtiendo";
+    } else if (estado.includes("Empaquetado")) {
+      return "Empaquetando";
+    } else if (estado === "Finalizado") {
+      return "Completado";
+    }
+    return estado; // Retorna el estado original si no coincide
+  };
+  
+
   const handleFilterChange = (filter) => {
     if (!buscandoPedido) {
       setPedidosFilter(filter);
@@ -250,56 +270,127 @@ const Pedidos = () => {
 
   return (
     <>
-      <div className="pedidos-header">
-        <div className="pedidos-header-filters">
-          <button
-            className={pedidosFilter === "Zona A" ? "pedidos-filter-selected" : ""}
-            onClick={() => handleFilterChange('Zona A')}
-            disabled={buscandoPedido}
-          >
-            Zona A ({conteoZonas['Zona A']})
-          </button>
-          <button
-            className={pedidosFilter === "Zona BC" ? "pedidos-filter-selected" : ""}
-            onClick={() => handleFilterChange('Zona BC')}
-            disabled={buscandoPedido}
-          >
-            Zona BC ({conteoZonas['Zona BC']})
-          </button>
-          <button
-            className={pedidosFilter === "Empaquetado" ? "pedidos-filter-selected" : ""}
-            onClick={() => handleFilterChange('Empaquetado')}
-            disabled={buscandoPedido}
-          >
-            Empaquetado ({conteoZonas['Empaquetado']})
-          </button>
-        </div>
-        <form className="pedidos-search" onSubmit={handleSearchSubmit}>
-          {buscandoPedido && (
-            <button
-              type="button"
-              className="reset-button"
-              onClick={resetPedidos}
-            >
-              Restablecer
-            </button>
-          )}
-          <IonIcon icon={searchOutline} className="pedidos-search-icon" />
-          <input
+<div className="pedidos-header">
+  <div className="pedidos-header-filters-actions">
+    <div className="pedidos-header-filters">
+      <button
+        className={pedidosFilter === "Zona A" ? "pedidos-filter-selected" : ""}
+        onClick={() => handleFilterChange('Zona A')}
+        disabled={buscandoPedido}
+      >
+        Zona A ({conteoZonas['Zona A']})
+      </button>
+      <button
+        className={pedidosFilter === "Zona BC" ? "pedidos-filter-selected" : ""}
+        onClick={() => handleFilterChange('Zona BC')}
+        disabled={buscandoPedido}
+      >
+        Zona BC ({conteoZonas['Zona BC']})
+      </button>
+      <button
+        className={pedidosFilter === "Empaquetado" ? "pedidos-filter-selected" : ""}
+        onClick={() => handleFilterChange('Empaquetado')}
+        disabled={buscandoPedido}
+      >
+        Empaquetado ({conteoZonas['Empaquetado']})
+      </button>
+    </div>
+    <button
+      className="todos-button"
+      onClick={() => setShowModal(true)}
+    >
+      Ver Todos ({backupPedidos.length})
+    </button>
+  </div>
+  <form className="pedidos-search" onSubmit={handleSearchSubmit}>
+    {buscandoPedido && (
+      <button
+        type="button"
+        className="reset-button"
+        onClick={resetPedidos}
+      >
+        Restablecer
+      </button>
+    )}
+    <IonIcon icon={searchOutline} className="pedidos-search-icon" />
+    <input
+      type="text"
+      placeholder="Buscar un pedido..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      disabled={buscandoPedido}
+    />
+  </form>
+</div>
+
+      {showModal && (
+      <div className="modal-overlay">
+        <div className="modal-content">
+          <h2>Todos los pedidos</h2> 
+          <div className="modal-filters">
+            <input
             type="text"
-            placeholder="Buscar un pedido..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            disabled={buscandoPedido}
-          />
-        </form>
+            placeholder="Buscar pedidos por cliente, pedido o zona..."
+            value={modalSearchTerm}
+            onChange={(e) => setModalSearchTerm(e.target.value)}
+            />
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Pedido</th>
+                <th>Nombre</th>
+                <th>Zona</th>
+                <th>Estado</th>
+                <th>Prioridad</th>
+              </tr>
+            </thead>
+            <tbody>
+  {backupPedidos
+    .filter((pedido) =>
+      (!modalSearchTerm || 
+        pedido.nombreCliente.toLowerCase().includes(modalSearchTerm.toLowerCase()) || 
+        pedido.numeroPedido.toString().includes(modalSearchTerm) || 
+        (pedido.zona && pedido.zona.toLowerCase().includes(modalSearchTerm.toLowerCase()))
+      )
+    )
+    .map((pedido) => (
+      <tr key={pedido.id}>
+        <td>{pedido.numeroPedido}</td>
+        <td>{pedido.nombreCliente}</td>
+        <td>{pedido.zona || 'Sin Zona'}</td>
+        <td>{pedido.estado}</td>
+        <td>
+  <button
+    className="prioridad-button"
+    style={{
+      backgroundColor: pedido.prioridad ? 'red' : 'transparent',
+      color: pedido.prioridad ? 'white' : 'black',
+    }}
+    onClick={() => cambiarPrioridad(pedido.id, pedido.prioridad, pedido.estado)}
+    disabled={!pedido.estado.includes('En espera')}
+  >
+    <IonIcon icon={alertOutline} />
+  </button>
+</td>
+
+      </tr>
+    ))}
+</tbody>
+
+          </table>
+          <button onClick={() => setShowModal(false)}>Cerrar</button>
+        </div>
       </div>
+    )}
+
       <div className="pedidos">
         <table>
           <thead>
             <tr>
               <th>Pedido</th>
               <th>Nombre</th>
+              <th>Zona</th>
               {!pedidosFilter.includes("Empaquetado") && <th>Prioridad</th>}
               <th>Llegada</th>
               <th>Tiempo (min)</th>
@@ -308,42 +399,45 @@ const Pedidos = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredPedidos.map((pedido) => (
-              <tr key={pedido.id}>
-                <td>{pedido.numeroPedido}</td>
-                <td>{pedido.nombreCliente}</td>
-                {!pedidosFilter.includes("Empaquetado") && (
-                  <td id="pedidos-prioridad">
-                    <button
-                      style={{
-                        backgroundColor: pedido.prioridad ? 'red' : 'transparent',
-                        color: pedido.prioridad ? 'white' : 'black',
-                      }}
-                      onClick={() => cambiarPrioridad(pedido.id, pedido.prioridad, pedido.estado)}
-                      disabled={!pedido.estado.includes('En espera')}
-                    >
-                      <IonIcon icon={alertOutline} />
-                    </button>
-                  </td>
-                )}
-                <td>
-                  {pedido.timestamp
-                    ? new Date(pedido.timestamp.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                    : 'Sin registro'}
-                </td>
-                <td>{pedido.tiempo}</td>
-                <td>{pedido.estado}</td>
-                <td>
-                  <button
-                    onClick={() => avanzarEstado(pedido.id, pedido.estado)}
-                    className="advance-button"
-                  >
-                    <IonIcon icon={arrowForwardOutline} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+
+  {filteredPedidos.map((pedido) => (
+    <tr key={pedido.id}>
+      <td>{pedido.numeroPedido}</td>
+      <td>{pedido.nombreCliente}</td>
+      <td>{pedido.zona || "Sin Zona"}</td> {/* Nueva celda */}
+      {!pedidosFilter.includes("Empaquetado") && (
+        <td id="pedidos-prioridad">
+          <button
+            style={{
+              backgroundColor: pedido.prioridad ? 'red' : 'transparent',
+              color: pedido.prioridad ? 'white' : 'black',
+            }}
+            onClick={() => cambiarPrioridad(pedido.id, pedido.prioridad, pedido.estado)}
+            disabled={!pedido.estado.includes('En espera')}
+          >
+            <IonIcon icon={alertOutline} />
+          </button>
+        </td>
+      )}
+      <td>
+        {pedido.timestamp
+          ? new Date(pedido.timestamp.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          : 'Sin registro'}
+      </td>
+      <td>{pedido.tiempo}</td>
+      <td>{traducirEstado(pedido.estado)}</td>
+      <td>
+        <button
+          onClick={() => avanzarEstado(pedido.id, pedido.estado)}
+          className="advance-button"
+        >
+          <IonIcon icon={arrowForwardOutline} />
+        </button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
         </table>
       </div>
     </>
