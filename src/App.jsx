@@ -18,7 +18,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/admin/*" element={<PrivateRoute requiredRoles={['Admin']}><Admin /></PrivateRoute>} />
           <Route path="/credito" element={<PrivateRoute requiredRoles={['credito']}><Credito showHeader={true} /></PrivateRoute>} />
-          <Route path="/clientes" element={<PrivateRoute requiredRoles={['clientes']}><Clientes/></PrivateRoute>} />
+          <Route path="/clientes" element={<PrivateRoute requiredRoles={['clientes']}><Clientes /></PrivateRoute>} />
           <Route path="/almacen" element={<PrivateRoute requiredRoles={['Zona A', 'Zona BC', 'Empaquetado']}><Almacen /></PrivateRoute>} />
         </Routes>
       </Router>

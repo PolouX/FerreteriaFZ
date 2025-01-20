@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { db } from '../../firebaseConfig'; // Importar configuración de Firebase
 import { collection, onSnapshot, query, where, updateDoc, doc, getDocs } from 'firebase/firestore';
 import './Credito.css';
+import AuthContext from '../../AuthContext'; // Importar contexto de autenticación
 
 const Credito = () => {
   const [pedidos, setPedidos] = useState([]);
@@ -9,13 +10,12 @@ const Credito = () => {
   const [accionSeleccionada, setAccionSeleccionada] = useState(null);
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null);
 
+  const { user } = useContext(AuthContext); // Obtener datos del usuario autenticado
+
   useEffect(() => {
     const pedidosRef = collection(db, 'pedidos');
-
-    // Filtrar solo los pedidos con 'credito: true'
     const pedidosCreditoQuery = query(pedidosRef, where('credito', '==', true));
 
-    // Escuchar los cambios en la colección en tiempo real
     const unsubscribe = onSnapshot(pedidosCreditoQuery, (snapshot) => {
       const pedidosData = snapshot.docs.map((doc) => ({
         id: doc.id,
@@ -25,7 +25,6 @@ const Credito = () => {
       setPedidos(pedidosData);
     });
 
-    // Actualizar minutos automáticamente cada 60 segundos
     const interval = setInterval(() => {
       setPedidos((prevPedidos) =>
         prevPedidos.map((pedido) => ({
@@ -35,14 +34,12 @@ const Credito = () => {
       );
     }, 60000);
 
-    // Limpiar la suscripción y el intervalo al desmontar el componente
     return () => {
       unsubscribe();
       clearInterval(interval);
     };
   }, []);
 
-  // Calcular el tiempo en minutos desde la creación del pedido
   const calcularTiempo = (timestamp) => {
     if (!timestamp) return 'Sin datos';
     const tiempoCreado = timestamp.toDate(); // Convertir el timestamp
@@ -51,73 +48,89 @@ const Credito = () => {
     return `${diferencia} minutos`;
   };
 
-  // Cargar productos desde la subcolección
   const cargarProductos = async (pedidoId) => {
     const productosCollectionRef = collection(db, `pedidos/${pedidoId}/productos`);
     const snapshot = await getDocs(productosCollectionRef);
     return snapshot.docs.map((doc) => doc.data());
   };
 
-  // Función para aceptar un pedido
   const aceptarPedido = async (id) => {
     try {
       const pedidoRef = doc(db, 'pedidos', id);
-
-      // Encuentra el pedido en la lista
       const pedido = pedidos.find((p) => p.id === id);
-
-      // Cargar productos desde la subcolección
       const productos = await cargarProductos(id);
+
       if (!productos || productos.length === 0) {
+        console.error('No hay productos asociados al pedido.');
         return;
       }
 
-      // Determinar la zona del pedido basado en los productos
-      let estadoInicial = 'En espera - Zona BC'; // Valor por defecto
-      const perteneceZonaA = productos.some((producto) => {
-        const lugar = producto.lugarAlmacenamiento?.trim().toUpperCase();
-        return lugar && lugar.startsWith('A');
-      });
+      const lugarVacio = productos.every(
+        (producto) =>
+          !producto.lugarAlmacenamiento || producto.lugarAlmacenamiento.trim() === ''
+      );
 
-      if (perteneceZonaA) {
-        estadoInicial = 'En espera - Zona A';
+      let estadoInicial = lugarVacio ? 'Finalizado' : 'En espera - Zona BC';
+      if (!lugarVacio) {
+        const perteneceZonaA = productos.some((producto) =>
+          producto.lugarAlmacenamiento?.trim().toUpperCase().startsWith('A')
+        );
+        if (perteneceZonaA) estadoInicial = 'En espera - Zona A';
       }
 
-      // Actualiza el pedido con el flujo normal de estados
       await updateDoc(pedidoRef, {
         estado: estadoInicial,
-        activo: true,
-        backorder: false,
-        prioridad: false,
+        credito: false,
         historialEstados: [
           ...(pedido.historialEstados || []),
-          { estado: estadoInicial, timestampInicio: new Date() },
+          {
+            estado: estadoInicial,
+            timestampInicio: new Date(),
+            aprobadoPor: `${user?.nombre} ${user?.apellido}`,
+          },
         ],
-        credito: false,
       });
+
+      console.log(
+        `Pedido ${id} aprobado al estado: ${estadoInicial} por ${user?.nombre} ${user?.apellido}.`
+      );
     } catch (error) {
       console.error('Error al aprobar el pedido:', error);
     }
   };
 
-  // Función para rechazar un pedido
   const rechazarPedido = async (id) => {
     try {
       const pedidoRef = doc(db, 'pedidos', id);
-      await updateDoc(pedidoRef, { estado: 'Rechazado', credito: false }); // Cambiar el estado a 'Rechazado' y desactivar crédito
+      const pedido = pedidos.find((p) => p.id === id);
+
+      await updateDoc(pedidoRef, {
+        estado: 'Rechazado',
+        credito: false,
+        historialEstados: [
+          ...(pedido.historialEstados || []),
+          {
+            estado: 'Rechazado',
+            timestampInicio: new Date(),
+            rechazadoPor: `${user?.nombre} ${user?.apellido}`,
+          },
+        ],
+      });
+
+      console.log(
+        `Pedido ${id} rechazado por ${user?.nombre} ${user?.apellido}.`
+      );
     } catch (error) {
       console.error('Error al rechazar el pedido:', error);
     }
   };
 
-  // Abrir el modal de confirmación
   const abrirModal = (pedido, accion) => {
     setPedidoSeleccionado(pedido);
     setAccionSeleccionada(accion);
     setMostrarModal(true);
   };
 
-  // Confirmar la acción en el modal
   const confirmarAccion = () => {
     if (accionSeleccionada === 'aceptar') {
       aceptarPedido(pedidoSeleccionado.id);
@@ -127,7 +140,6 @@ const Credito = () => {
     cerrarModal();
   };
 
-  // Cerrar el modal
   const cerrarModal = () => {
     setPedidoSeleccionado(null);
     setAccionSeleccionada(null);
@@ -136,7 +148,6 @@ const Credito = () => {
 
   return (
     <div className="clientes-pedidos">
-      {/* Tabla de pedidos */}
       <table>
         <thead>
           <tr>
@@ -194,32 +205,25 @@ const Credito = () => {
         </tbody>
       </table>
 
-{/* Modal de confirmación */}
-{mostrarModal && (
-  <div className="modal-overlay">
-    <div className="modal-content">
-      <h2 className={accionSeleccionada === 'aceptar' ? 'modal-title-aceptar' : 'modal-title-rechazar'}>
-        {accionSeleccionada === 'aceptar' ? 'Aceptar Pedido' : 'Rechazar Pedido'}
-      </h2>
-      <p>
-        ¿Estás seguro que deseas {accionSeleccionada} el pedido{' '}
-        <strong>{pedidoSeleccionado?.numeroPedido || 'N/A'}</strong>?
-      </p>
-      <div className="modal-actions">
-        <button
-          onClick={confirmarAccion}
-          className={accionSeleccionada === 'aceptar' ? 'btn-aceptar' : 'btn-rechazar'}
-        >
-          {accionSeleccionada === 'aceptar' ? 'Aceptar' : 'Rechazar'}
-        </button>
-        <button onClick={cerrarModal} className="btn-cancelar">
-          Cancelar
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+      {mostrarModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>
+              {accionSeleccionada === 'aceptar' ? 'Aceptar Pedido' : 'Rechazar Pedido'}
+            </h2>
+            <p>
+              ¿Estás seguro que deseas {accionSeleccionada} el pedido{' '}
+              <strong>{pedidoSeleccionado?.numeroPedido || 'N/A'}</strong>?
+            </p>
+            <div className="modal-actions">
+              <button onClick={confirmarAccion}>
+                {accionSeleccionada === 'aceptar' ? 'Aceptar' : 'Rechazar'}
+              </button>
+              <button onClick={cerrarModal}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
